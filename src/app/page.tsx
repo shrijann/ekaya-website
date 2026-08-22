@@ -23,12 +23,12 @@ export default function Home() {
   const musicians: Member[] = [
     {
       name: 'Shreejan Shyama',
-      role: 'Direction & Sarangi',
+      role: 'Director & Sarangi',
       handle: '@shreejanshyamaa',
       link: 'https://www.instagram.com/shreejanshyamaa/',
       img: '/ekaya-website/images/members/shreejanshyama.jpg',
       bio: 'Musical director and Sarangi craftsman. Shreejan blends traditional Nepali melodic structures with modern acoustic arrangements, leading the ensemble’s creative direction.',
-      instruments: ['Sarangi', 'Direction', 'Arrangements'],
+      instruments: ['Sarangi', 'Director', 'Arrangements'],
     },
     {
       name: 'Priya Basnet',
