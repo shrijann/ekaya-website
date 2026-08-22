@@ -15,7 +15,7 @@ export const metadata: Metadata = {
     siteName: "Ekaya Hami",
     images: [
       {
-        url: "/ekaya-website/images/og-image.jpg",
+        url: "https://shrijann.github.io/ekaya-website/images/ekayaxdonob.jpg",
         width: 1200,
         height: 630,
         alt: "Ekaya Hami Cover",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ekaya Hami — Nepali Folk-Fusion Ensemble",
     description: "Official website of Ekaya Hami, a Nepali folk-fusion musical group from Bhaktapur, Nepal. Signed under donob orie.",
-    images: ["/ekaya-website/images/og-image.jpg"],
+    images: ["https://shrijann.github.io/ekaya-website/images/ekayaxdonob.jpg"],
   },
 };
 
