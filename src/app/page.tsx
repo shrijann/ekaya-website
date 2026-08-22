@@ -43,15 +43,15 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black">
+    <div id="top" className="min-h-screen bg-[#0a0a0a] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth">
       {/* Top Navbar */}
       <nav className="sticky top-0 z-50 bg-[#0a0a0a]/90 backdrop-blur-md border-b border-neutral-900 px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
-        <div className="flex items-center space-x-3">
-          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-amber-500/40 shadow-sm shadow-amber-500/20">
-            <Image src="/ekaya-website/images/logo.png" alt="Ekaya" fill className="object-cover" />
+        <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-amber-500/40 shadow-sm shadow-amber-500/20 group-hover:border-amber-500 transition-colors">
+            <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
           </div>
-          <span className="font-bold text-amber-500 tracking-wider text-lg">EKAYA HAMI</span>
-        </div>
+          <span className="font-bold text-amber-500 tracking-wider text-lg group-hover:text-amber-400 transition-colors">EKAYA HAMI</span>
+        </a>
         
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-neutral-300">
           <a href="#about" className="hover:text-amber-500 transition-colors">About</a>
@@ -82,11 +82,13 @@ export default function Home() {
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/70 to-[#0a0a0a]/40" />
 
         <div className="relative z-10 flex flex-col items-center max-w-3xl">
-          <div className="relative w-36 h-36 rounded-full p-1 bg-gradient-to-b from-amber-500/60 to-amber-500/10 mb-6 shadow-2xl shadow-amber-500/10">
-            <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-amber-500/30">
-              <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
+          <a href="#top" className="relative group cursor-pointer">
+            <div className="relative w-36 h-36 rounded-full p-1 bg-gradient-to-b from-amber-500/60 to-amber-500/10 mb-6 shadow-2xl shadow-amber-500/10 group-hover:scale-105 group-hover:shadow-amber-500/30 transition-all duration-300">
+              <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-amber-500/30">
+                <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
+              </div>
             </div>
-          </div>
+          </a>
 
           <span className="text-xs font-semibold uppercase tracking-widest text-amber-500 px-4 py-1.5 bg-amber-500/10 rounded-full border border-amber-500/20 mb-4 animate-pulse">
             Signed Under donob orie
@@ -96,21 +98,28 @@ export default function Home() {
             Nepali Folk-Fusion Ensemble from Bhaktapur, Nepal
           </p>
 
+          {/* Animated Interactive Action Buttons */}
           <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
-            <a href="#videos" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-7 py-3 rounded-full transition-all transform hover:scale-105 shadow-lg shadow-amber-500/20">
-              ▶ Watch Videos
+            <a
+              href="#videos"
+              className="relative inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-400 text-black font-bold px-8 py-3.5 rounded-full transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 shadow-[0_0_20px_rgba(245,158,11,0.4)] hover:shadow-[0_0_35px_rgba(245,158,11,0.7)] group"
+            >
+              <span className="inline-block transition-transform group-hover:scale-125 duration-300">▶</span>
+              <span>Watch Videos</span>
             </a>
+            
             <button
               onClick={() => setIsBookingOpen(true)}
-              className="border border-neutral-700 hover:border-amber-500/60 hover:bg-neutral-900 text-neutral-200 px-7 py-3 rounded-full transition-all transform hover:scale-105"
+              className="relative inline-flex items-center space-x-2 border-2 border-amber-500/40 hover:border-amber-500 bg-neutral-900/60 hover:bg-neutral-900 text-neutral-200 hover:text-amber-400 font-semibold px-8 py-3.5 rounded-full transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 shadow-lg hover:shadow-amber-500/20 group"
             >
-              📅 Book Live Performance
+              <span className="inline-block transition-transform group-hover:rotate-12 duration-300">📅</span>
+              <span>Book Live Performance</span>
             </button>
           </div>
         </div>
       </header>
 
-      {/* About Section */}
+      {/* Enhanced About Section */}
       <section id="about" className="py-20 px-6 max-w-5xl mx-auto border-b border-neutral-900/60">
         <div className="bg-[#121212] border border-neutral-800/80 rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl">
           <div className="absolute top-0 right-0 -mt-8 -mr-8 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -118,14 +127,16 @@ export default function Home() {
           <div className="max-w-3xl">
             <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">About The Ensemble</span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-6">Reimagining Folk Heritage</h2>
-            <p className="text-neutral-300 text-base sm:text-lg leading-relaxed font-light mb-6">
-              <strong>Ekaya</strong> (also known as <strong>Ekaya Hami</strong>) is a Nepali folk-fusion ensemble originating from <strong>Bhaktapur, Nepal</strong>, signed under <strong>donob orie</strong>.
+            
+            <p className="text-neutral-300 text-base sm:text-lg leading-relaxed font-light mb-5">
+              <strong>Ekaya</strong> (also known as <strong>Ekaya Hami</strong>) is a premier Nepali folk-fusion ensemble originating from the historic cultural heartland of <strong>Bhaktapur, Nepal</strong>. Signed under the independent record label <strong>donob orie</strong>, the group bridges timeless traditional Nepalese roots with modern musical soundscapes.
             </p>
+            
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mb-6">
-              The group is known for reimagining traditional regional tunes and classical folk heritage with contemporary instrumentation—blending soulful Sarangi melodies, flute compositions, acoustic strings, and rich percussive rhythms into modern fusion arrangements.
+              By blending the haunting resonance of the <strong>Sarangi</strong>, airy compositions of the traditional <strong>Flute (Bansuri)</strong>, rhythmic <strong>acoustic guitars</strong>, and vibrant percussive beats like the <strong>Taa</strong> and traditional drums, Ekaya breathes fresh life into classical regional compositions and folk melodies—preserving centuries of Nepalese heritage for modern worldwide audiences.
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4 border-t border-neutral-800">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t border-neutral-800">
               <div>
                 <p className="text-xs text-neutral-500 uppercase tracking-wider">Origin</p>
                 <p className="text-sm font-semibold text-amber-500">Bhaktapur, Nepal</p>
@@ -149,7 +160,6 @@ export default function Home() {
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Official YouTube Releases</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">Featured Music & Videos</h2>
           
-          {/* Tab Controls */}
           <div className="flex justify-center space-x-4 mt-6">
             <button
               onClick={() => setActiveTab('popular')}
@@ -174,7 +184,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Video Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {(activeTab === 'popular' ? popularVideos : recentVideos).map((video) => (
             <div key={video.id} className="bg-[#121212] border border-neutral-800 rounded-2xl overflow-hidden shadow-xl hover:border-amber-500/30 transition-all group">
@@ -242,7 +251,6 @@ export default function Home() {
               <h3 className="font-bold text-lg text-white group-hover:text-amber-500 transition-colors">{member.name}</h3>
               <p className="text-sm text-amber-500/90 font-medium mt-0.5">{member.role}</p>
               
-              {/* Clickable Instagram Link */}
               <a
                 href={member.link}
                 target="_blank"
@@ -279,7 +287,6 @@ export default function Home() {
                 <h4 className="font-bold text-lg text-white group-hover:text-amber-500 transition-colors">{member.name}</h4>
                 <p className="text-sm text-amber-500/90 font-medium mt-0.5">{member.role}</p>
 
-                {/* Clickable Instagram Link */}
                 <a
                   href={member.link}
                   target="_blank"
@@ -295,7 +302,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Interactive Booking & Inquiries Section */}
+      {/* Booking Section */}
       <section id="booking" className="py-20 px-6 max-w-4xl mx-auto">
         <div className="bg-[#121212] border border-neutral-800 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-2xl">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Live Performances & Inquiries</span>
@@ -329,7 +336,7 @@ export default function Home() {
 
       {/* Booking Form Modal */}
       {isBookingOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
           <div className="bg-[#141414] border border-neutral-800 w-full max-w-lg rounded-3xl p-6 sm:p-8 relative shadow-2xl">
             <button
               onClick={() => setIsBookingOpen(false)}
