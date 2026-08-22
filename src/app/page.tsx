@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function Home() {
-  const members = [
+  const musicians = [
     { name: 'Shreejan Shyama', role: 'Direction & Sarangi', handle: '@shreejanshyamaa', img: '/ekaya-website/images/members/shreejanshyama.jpg' },
     { name: 'Priya Basnet', role: 'Vocals', handle: '@priyaa.basnett', img: '/ekaya-website/images/members/priya.jpg' },
     { name: 'Shrijan Maharjan', role: 'Flutist', handle: '@shrijann_', img: '/ekaya-website/images/members/shrijan.jpg' },
@@ -14,10 +14,15 @@ export default function Home() {
     { name: 'Amulya Rajchal', role: 'Percussionist', handle: '@amulya_tuned', img: '/ekaya-website/images/members/amulya.jpg' },
   ];
 
+  const management = [
+    { name: 'Sujan Sujakhu', role: 'Manager & Sound Engineer', handle: '@sujan_sujakhu', img: '/ekaya-website/images/members/sujansujakhu.jpg' },
+    { name: 'Sujal Suwal', role: 'Effects & Production', handle: '@sujal_suwal', img: '/ekaya-website/images/members/sujalsuwal.jpg' },
+  ];
+
   return (
     <div className="min-h-screen bg-[#0d0d0d] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black">
       {/* Top Navbar */}
-      <nav className="sticky top-0 z-50 bg-[#0d0d0d]/80 backdrop-blur-md border-b border-neutral-900 px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
+      <nav className="sticky top-0 z-50 bg-[#0d0d0d]/90 backdrop-blur-md border-b border-neutral-900 px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
         <div className="flex items-center space-x-3">
           <div className="relative w-8 h-8 rounded-full overflow-hidden border border-amber-500/30">
             <Image src="/ekaya-website/images/logo.png" alt="Ekaya" fill className="object-cover" />
@@ -28,7 +33,7 @@ export default function Home() {
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-neutral-300">
           <a href="#about" className="hover:text-amber-500 transition-colors">About</a>
           <a href="#videos" className="hover:text-amber-500 transition-colors">Videos & Music</a>
-          <a href="#ensemble" className="hover:text-amber-500 transition-colors">Ensemble</a>
+          <a href="#members" className="hover:text-amber-500 transition-colors">Band Members</a>
           <a href="#booking" className="hover:text-amber-500 transition-colors">Booking</a>
         </div>
 
@@ -42,42 +47,73 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Hero Section */}
-      <header id="about" className="relative py-24 px-6 text-center flex flex-col items-center justify-center border-b border-neutral-900/50">
-        <div className="relative w-36 h-36 rounded-full p-1 bg-gradient-to-b from-amber-500/40 to-transparent mb-6">
-          <div className="relative w-full h-full rounded-full overflow-hidden border border-neutral-800">
-            <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" priority />
-          </div>
-        </div>
-        <span className="text-xs uppercase tracking-widest text-amber-500 font-semibold px-3 py-1 bg-amber-500/10 rounded-full border border-amber-500/20 mb-3">
-          OFFICIAL BAND PORTAL
-        </span>
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-4">EKAYA HAMI</h1>
-        <p className="text-lg md:text-xl text-neutral-400 font-light max-w-xl">
-          Nepali Folk Fusion Ensemble • Bhaktapur, Nepal
-        </p>
+      {/* Hero Header with ekayaxdonob.jpg Background */}
+      <header id="about" className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden border-b border-neutral-900">
+        <Image
+          src="/ekaya-website/images/ekayaxdonob.jpg"
+          alt="Ekaya Band Cover"
+          fill
+          priority
+          className="object-cover opacity-25"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0d0d] via-[#0d0d0d]/60 to-[#0d0d0d]" />
 
-        <div className="mt-8 flex items-center space-x-4">
-          <a href="#videos" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-6 py-3 rounded-full transition-all transform hover:scale-105 shadow-lg shadow-amber-500/20">
-            ▶ Watch Videos
-          </a>
-          <a href="#booking" className="border border-neutral-700 hover:border-amber-500/50 hover:bg-neutral-900 text-neutral-200 px-6 py-3 rounded-full transition-all">
-            Book Ekaya
-          </a>
+        <div className="relative z-10 flex flex-col items-center max-w-3xl">
+          <div className="relative w-32 h-32 rounded-full p-1 bg-gradient-to-b from-amber-500/50 to-transparent mb-6 shadow-2xl">
+            <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-amber-500/30">
+              <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
+            </div>
+          </div>
+
+          <span className="text-xs uppercase tracking-widest text-amber-500 font-semibold px-4 py-1.5 bg-amber-500/10 rounded-full border border-amber-500/20 mb-4">
+            OFFICIAL BAND WEBSITE
+          </span>
+          <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-white mb-4">EKAYA HAMI</h1>
+          <p className="text-lg sm:text-xl text-neutral-300 font-light mb-2">
+            Traditional Nepali Folk Music Mixed with Modern Fusion Sounds
+          </p>
+          <p className="text-sm text-amber-500/80 tracking-wide font-medium">Based in Bhaktapur, Nepal</p>
+
+          <div className="mt-8 flex items-center space-x-4">
+            <a href="#videos" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-6 py-3 rounded-full transition-all transform hover:scale-105 shadow-lg shadow-amber-500/20">
+              ▶ Watch Videos
+            </a>
+            <a href="#booking" className="border border-neutral-700 hover:border-amber-500/50 hover:bg-neutral-900 text-neutral-200 px-6 py-3 rounded-full transition-all">
+              Book Ekaya
+            </a>
+          </div>
         </div>
       </header>
 
-      {/* Musicians & Crew Section */}
-      <section id="ensemble" className="py-20 px-6 max-w-7xl mx-auto">
-        <div className="text-center mb-14">
-          <h2 className="text-3xl md:text-4xl font-bold text-amber-500 tracking-tight">Musicians & Crew</h2>
+      {/* Embedded Video Section */}
+      <section id="videos" className="py-20 px-6 max-w-5xl mx-auto border-b border-neutral-900">
+        <div className="text-center mb-10">
+          <h2 className="text-3xl font-bold text-amber-500 tracking-tight">Music & Performances</h2>
+          <p className="text-neutral-400 text-sm mt-2">Watch our latest musical performances and music videos</p>
+        </div>
+        <div className="relative aspect-video w-full rounded-2xl overflow-hidden border border-neutral-800 shadow-2xl">
+          <iframe
+            className="w-full h-full"
+            src="https://www.youtube.com/embed/videoseries?list=PL3e_S9C22_2f..." 
+            title="Ekaya Hami Music Videos"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowFullScreen
+          ></iframe>
+        </div>
+      </section>
+
+      {/* Band Members Section */}
+      <section id="members" className="py-20 px-6 max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-amber-500 tracking-tight">Band Members</h2>
+          <p className="text-neutral-400 text-sm mt-2">The musicians behind the folk-fusion sound</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {members.map((member) => (
+          {musicians.map((member) => (
             <div
               key={member.name}
-              className="group relative bg-[#121212] border border-neutral-800/80 hover:border-amber-500/40 rounded-2xl p-6 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/5"
+              className="group relative bg-[#121212] border border-neutral-800/80 hover:border-amber-500/40 rounded-2xl p-6 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl hover:shadow-amber-500/5"
             >
               <div className="relative w-32 h-32 rounded-full overflow-hidden border-2 border-neutral-800 group-hover:border-amber-500 transition-colors duration-300 mb-4">
                 <Image
@@ -93,10 +129,39 @@ export default function Home() {
             </div>
           ))}
         </div>
+
+        {/* Management & Sound Team */}
+        <div className="mt-20">
+          <div className="text-center mb-10">
+            <h3 className="text-2xl font-bold text-white tracking-tight">Management & Sound Team</h3>
+            <p className="text-neutral-400 text-sm mt-1">The production crew behind our live shows</p>
+          </div>
+          <div className="flex flex-wrap justify-center gap-6">
+            {management.map((member) => (
+              <div
+                key={member.name}
+                className="group relative bg-[#121212] border border-neutral-800/80 hover:border-amber-500/40 rounded-2xl p-6 w-64 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1.5"
+              >
+                <div className="relative w-28 h-28 rounded-full overflow-hidden border-2 border-neutral-800 group-hover:border-amber-500 transition-colors duration-300 mb-4">
+                  <Image
+                    src={member.img}
+                    alt={member.name}
+                    fill
+                    className="object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
+                  />
+                </div>
+                <h4 className="font-bold text-lg text-white group-hover:text-amber-500 transition-colors">{member.name}</h4>
+                <p className="text-sm text-amber-500/90 font-medium mt-0.5">{member.role}</p>
+                <p className="text-xs text-neutral-500 mt-2">{member.handle}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Footer */}
-      <footer id="booking" className="py-8 border-t border-neutral-900 text-center text-xs text-neutral-600">
+      <footer id="booking" className="py-12 border-t border-neutral-900 text-center text-xs text-neutral-500 space-y-2">
+        <p className="text-sm text-neutral-300 font-medium">For Bookings & Events: Contact via Instagram @ekayahami</p>
         <p>© {new Date().getFullYear()} Ekaya Hami. All rights reserved.</p>
       </footer>
     </div>
