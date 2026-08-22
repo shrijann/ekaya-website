@@ -59,12 +59,12 @@ export default function Home() {
     },
     {
       name: 'Bishal Basi',
-      role: 'Percussionist',
+      role: 'Percussionist & Madal',
       handle: '@bishalbasii',
       link: 'https://www.instagram.com/bishalbasii/',
       img: '/ekaya-website/images/members/bishalbasi.jpg',
-      bio: 'Anchoring the rhythmic energy of the ensemble, Bishal drives the beat with traditional percussion setups and intricate folk polyrhythms.',
-      instruments: ['Percussion', 'Drums'],
+      bio: 'Anchoring the rhythmic energy of the ensemble, Bishal drives the beat with traditional Madal patterns and intricate folk polyrhythms.',
+      instruments: ['Percussion', 'Madal'],
     },
     {
       name: 'Sudeep Chawal',
