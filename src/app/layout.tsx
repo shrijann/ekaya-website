@@ -38,8 +38,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
+      <body className={`${inter.className} bg-[#070708] text-neutral-100 antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }
