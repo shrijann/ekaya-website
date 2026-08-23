@@ -304,22 +304,24 @@ export default function Home() {
 
         <div className="relative z-10 flex flex-col items-center max-w-3xl">
           <a href="#top" className="relative group cursor-pointer">
-            <div className="relative w-36 h-36 rounded-full p-1 bg-neutral-800 mb-6 border border-white/20 group-hover:border-amber-500/80 group-hover:scale-105 transition-all duration-300 shadow-[0_0_25px_rgba(245,158,11,0.2)]">
+            <div className="relative w-36 h-36 rounded-full p-1 bg-neutral-800 mb-6 border border-white/20 group-hover:border-amber-500/80 group-hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
               <div className="relative w-full h-full rounded-full overflow-hidden">
                 <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
               </div>
             </div>
           </a>
 
-          {/* Glowing Badge */}
-          <div className="relative group mb-4">
-            <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full blur-sm opacity-60 group-hover:opacity-100 transition duration-500 animate-pulse" />
-            <span className="relative text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-300 px-4 py-1.5 bg-black/80 rounded-full border border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.3)] block">
+          {/* Lightweight Warm Left-to-Right Shimmer Badge */}
+          <div className="relative inline-flex items-center justify-center px-5 py-1.5 rounded-full bg-[#121215] border border-amber-500/40 overflow-hidden shadow-[0_0_15px_rgba(245,158,11,0.2)] mb-4 group cursor-pointer">
+            {/* Animated Warm Light Beam sweeping left to right */}
+            <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-amber-500/30 to-transparent animate-shimmer-wave" />
+            
+            <span className="relative text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-300 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
               Signed Under donob orie
             </span>
           </div>
 
-          {/* Animated & Glowing Title */}
+          {/* Interactive Animated & Glowing Title */}
           <div className="relative group cursor-pointer my-2">
             <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
             <h1 className="relative text-5xl sm:text-7xl font-extrabold tracking-tight text-white group-hover:text-amber-400 group-hover:scale-105 group-hover:drop-shadow-[0_0_25px_rgba(245,158,11,0.6)] transition-all duration-300">

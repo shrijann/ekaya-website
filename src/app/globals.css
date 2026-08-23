@@ -6,3 +6,17 @@
     color: #f5f5f5;
   }
 }
+
+/* Custom Lightweight Warm Shimmer Animation */
+@keyframes shimmerWave {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(200%);
+  }
+}
+
+.animate-shimmer-wave {
+  animation: shimmerWave 2.5s linear infinite;
+}
