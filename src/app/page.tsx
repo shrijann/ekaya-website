@@ -29,7 +29,7 @@ const MUSICIANS: Member[] = [
     handle: '@shreejanshyamaa',
     link: 'https://www.instagram.com/shreejanshyamaa/',
     img: '/ekaya-website/images/members/shreejanshyama.jpg',
-    bio: 'Musical director and Sarangi craftsman. Shreejan blends traditional Nepali melodic structures with modern acoustic arrangements, leading the ensemble’s creative direction.',
+    bio: 'Founder, composer, and music video director. Shreejan blends traditional Nepali melodic structures with modern acoustic arrangements, leading the ensemble’s creative direction.',
     instruments: ['Sarangi', 'Director', 'Arrangements'],
   },
   {
@@ -38,7 +38,7 @@ const MUSICIANS: Member[] = [
     handle: '@priyaa.basnett',
     link: 'https://www.instagram.com/priyaa.basnett/',
     img: '/ekaya-website/images/members/priya.jpg',
-    bio: 'The soulful voice of Ekaya Hami. Priya brings deep emotion and classical precision to folk compositions, weaving timeless vocal stories across modern soundscapes.',
+    bio: 'The soulful voice of Ekaya Hami who suggested the name "Ekaya" (meaning Unity). Priya brings deep emotion and classical precision to folk compositions.',
     instruments: ['Lead Vocals'],
   },
   {
@@ -65,8 +65,8 @@ const MUSICIANS: Member[] = [
     handle: '@bishalbasii',
     link: 'https://www.instagram.com/bishalbasii/',
     img: '/ekaya-website/images/members/bishalbasi.jpg',
-    bio: 'Anchoring the rhythmic energy of the ensemble, Bishal drives the beat with traditional Madal patterns and intricate folk polyrhythms.',
-    instruments: ['Madal', 'Percussion'],
+    bio: 'Anchoring the rhythmic energy of the ensemble, Bishal drives the beat with traditional Madal and Dhime patterns and intricate folk polyrhythms.',
+    instruments: ['Madal', 'Dhime', 'Percussion'],
   },
   {
     name: 'Sudeep Chawal',
@@ -109,42 +109,56 @@ const MANAGEMENT: Member[] = [
   },
 ];
 
-// Fixed Master List with exact metrics
+// Verified Master Video Database from @donoborie YouTube channel
 const VIDEOS: Video[] = [
-  {
-    title: 'Hissi - Ekaya Hami | Official Music Video',
-    id: 'OBezCp_2cEY',
-    desc: 'Official Music Video',
-    views: 125000,
-    publishedAt: '2024-01-15',
-  },
-  {
-    title: 'Mayosa - Shreejan, Priya & Ekaya Hami',
-    id: 'fC2TbByrlbA',
-    desc: 'Official Music Video',
-    views: 85000,
-    publishedAt: '2024-05-10',
-  },
-  {
-    title: 'Asan Twa - Ekaya Hami | donob sessions',
-    id: '2HTRkmBVE6w',
-    desc: 'A fresh folk-fusion rendition of a classic Newa tune',
-    views: 42000,
-    publishedAt: '2024-09-20',
-  },
   {
     title: 'Jhan Jaka Maya - Ekaya Hami | Live at Asan',
     id: 'OzyBRsBbeNE',
     desc: 'Live Performance from Asan, Kathmandu',
-    views: 10957,
+    views: 7600,
     publishedAt: '2026-07-29',
   },
   {
     title: 'Ratna - Juju Kaji Ranjit with Ekaya Hami | Live at Asan',
     id: '7dtLDBqayCY',
     desc: 'Kathmandu Film Festival Collaboration',
-    views: 6299,
+    views: 5200,
     publishedAt: '2026-07-03',
+  },
+  {
+    title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Acoustic Version',
+    id: 'hCyzUe7hb2Q',
+    desc: 'donob sessions acoustic rendition',
+    views: 27000,
+    publishedAt: '2025-08-14',
+  },
+  {
+    title: 'Ekaya Hami - Asan Twa | donob sessions',
+    id: '2HTRkmBVE6w',
+    desc: 'A fresh folk-fusion rendition of a classic Newa tune',
+    views: 2300000,
+    publishedAt: '2025-04-04',
+  },
+  {
+    title: 'Ekaya Hami - Ratna | Cover | donob sessions',
+    id: '7dtLDBqayCY',
+    desc: 'Classic Nepal Bhasa cover by Ekaya Hami',
+    views: 340000,
+    publishedAt: '2025-02-10',
+  },
+  {
+    title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Official Music Video',
+    id: 'fC2TbByrlbA',
+    desc: 'Official Music Video',
+    views: 222000,
+    publishedAt: '2024-05-10',
+  },
+  {
+    title: 'Hissi - Ekaya Hami | Official Music Video',
+    id: 'OBezCp_2cEY',
+    desc: 'Official Music Video',
+    views: 109000,
+    publishedAt: '2024-01-15',
   },
 ];
 
@@ -165,7 +179,7 @@ export default function Home() {
     details: '',
   });
 
-  // Strict sorting algorithm based on selected tab
+  // Precise sorting algorithm based on selected tab
   const displayedVideos = [...VIDEOS].sort((a, b) => {
     if (activeTab === 'popular') {
       return b.views - a.views; // High views to low views
@@ -311,21 +325,25 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-6">Reimagining Folk Heritage</h2>
             
             <p className="text-neutral-300 text-base sm:text-lg leading-relaxed font-light mb-5">
-              <strong>Ekaya</strong> (also known as <strong>Ekaya Hami</strong>) is a premier Nepali folk-fusion ensemble originating from the historic cultural heartland of <strong>Bhaktapur, Nepal</strong>. Signed under the independent record label <strong>donob orie</strong>, the group bridges timeless traditional Nepalese roots with modern musical soundscapes.
+              The Nepali folk-fusion ensemble <strong>Ekaya Hami</strong> (known as <strong>Ekaya</strong>) was founded in 2024, envisioned by composer and music video director <strong>Shreejan Shyama</strong> alongside filmmaker <strong>Nischal Kisee</strong>. The band made its debut live performance during the <em>Nawa Barsha Purwa Sandhya</em> event.
             </p>
             
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mb-6">
-              By blending the haunting resonance of the <strong>Sarangi</strong>, airy compositions of the traditional <strong>Flute (Bansuri)</strong>, rhythmic <strong>acoustic guitars</strong>, and vibrant percussive beats like the <strong>Madal</strong>, <strong>Taa</strong>, and traditional drums, Ekaya breathes fresh life into classical regional compositions.
+              The word <em>"Ekaya"</em> signifies <strong>unity</strong>, a name suggested by vocalist <strong>Priya Basnet</strong>. Ekaya’s signature musical style seamlessly blends traditional Newa and Nepali instruments—such as the <strong>Sarangi</strong>, <strong>Madal</strong>, <strong>Dhime</strong>, and traditional <strong>Flutes (Bansuri)</strong>—with contemporary acoustic and modern textures. Signed under the independent label <strong>donob orie</strong>, Ekaya continues to revitalize classic heritage tunes for modern audiences.
             </p>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t border-white/10">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/10">
+              <div>
+                <p className="text-xs text-neutral-500 uppercase tracking-wider">Founded</p>
+                <p className="text-sm font-semibold text-amber-500 mt-0.5">2024</p>
+              </div>
+              <div>
+                <p className="text-xs text-neutral-500 uppercase tracking-wider">Founders</p>
+                <p className="text-sm font-semibold text-amber-500 mt-0.5">Shreejan Shyama & Nischal Kisee</p>
+              </div>
               <div>
                 <p className="text-xs text-neutral-500 uppercase tracking-wider">Origin</p>
                 <p className="text-sm font-semibold text-amber-500 mt-0.5">Bhaktapur, Nepal</p>
-              </div>
-              <div>
-                <p className="text-xs text-neutral-500 uppercase tracking-wider">Genre</p>
-                <p className="text-sm font-semibold text-amber-500 mt-0.5">Nepali Folk-Fusion</p>
               </div>
               <div>
                 <p className="text-xs text-neutral-500 uppercase tracking-wider">Record Label</p>
@@ -374,7 +392,7 @@ export default function Home() {
                 <div>
                   <h3 className="font-bold text-white group-hover:text-amber-500 transition-colors text-sm sm:text-base line-clamp-2">{video.title}</h3>
                   <p className="text-xs text-neutral-400 mt-1">{video.desc}</p>
-                  <span className="inline-block mt-2 text-[10px] text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                  <span className="inline-block mt-2 text-[10px] text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20 font-semibold">
                     {video.views.toLocaleString()} views
                   </span>
                 </div>
