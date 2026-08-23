@@ -19,6 +19,7 @@ interface Video {
   title: string;
   id: string;
   desc: string;
+  url: string;
 }
 
 const MUSICIANS: Member[] = [
@@ -108,71 +109,81 @@ const MANAGEMENT: Member[] = [
   },
 ];
 
-// Explicit Recent Releases List
+// Clean Recent Releases List
 const RECENT_VIDEOS: Video[] = [
   {
     uniqueKey: 'rec-1',
     title: 'Jhan Jaka Maya - Ekaya Hami | Live at Asan',
     id: 'OzyBRsBbeNE',
     desc: 'Live performance in Asan, Kathmandu.',
+    url: 'https://www.youtube.com/watch?v=OzyBRsBbeNE',
   },
   {
     uniqueKey: 'rec-2',
     title: 'Ratna - Juju Kaji Ranjit with Ekaya Hami | Live at Asan',
     id: '7dtLDBqayCY',
     desc: 'Live collaboration at Kathmandu Film Festival.',
+    url: 'https://www.youtube.com/watch?v=7dtLDBqayCY',
   },
   {
     uniqueKey: 'rec-3',
     title: 'Hissi - Ekaya Hami | Official Music Video',
     id: 'OBezCp_2cEY',
     desc: 'Official Music Video release.',
+    url: 'https://www.youtube.com/watch?v=OBezCp_2cEY',
   },
   {
     uniqueKey: 'rec-4',
     title: 'Ekaya Hami - Ratna | Cover | donob sessions',
     id: 'KHpnE8_hHts',
     desc: 'Folk-fusion studio cover.',
+    url: 'https://www.youtube.com/watch?v=KHpnE8_hHts',
   },
   {
     uniqueKey: 'rec-5',
     title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Lyrics Video',
     id: 'aiz_ivdBRrc',
     desc: 'Official Lyrics Video release.',
+    url: 'https://www.youtube.com/watch?v=aiz_ivdBRrc',
   },
 ];
 
-// Explicit Popular Releases List
+// Clean Popular Releases List
 const POPULAR_VIDEOS: Video[] = [
   {
     uniqueKey: 'pop-1',
     title: 'Ekaya Hami - Asan Twa | donob sessions',
     id: '2HTRkmBVE6w',
     desc: 'Classic folk-fusion rendition.',
+    url: 'https://www.youtube.com/watch?v=2HTRkmBVE6w',
   },
   {
     uniqueKey: 'pop-2',
     title: 'Ekaya Hami - Ratna | Cover | donob sessions',
     id: 'KHpnE8_hHts',
     desc: 'Popular studio session performance.',
+    url: 'https://www.youtube.com/watch?v=KHpnE8_hHts',
   },
   {
     uniqueKey: 'pop-3',
     title: 'Ekaya Hami - Ghatu | donob sessions',
     id: 'XRpF6H2ZNDQ',
     desc: 'Tribute cover of Late King Ranajit Malla’s composition.',
+    url: 'https://www.youtube.com/watch?v=XRpF6H2ZNDQ',
   },
   {
     uniqueKey: 'pop-4',
     title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Official Music Video',
     id: 'fC2TbByrlbA',
     desc: 'Official full production music video.',
+    url: 'https://www.youtube.com/watch?v=fC2TbByrlbA',
   },
   {
     uniqueKey: 'pop-5',
     title: 'Hissi - Ekaya Hami | Official Music Video',
     id: 'OBezCp_2cEY',
     desc: 'Official Music Video release.',
+    url: 'https://www.youtube.com/watch?v=OBezCp_2cEY',
   },
 ];
 
@@ -232,11 +243,11 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
       
-      {/* Background Glows */}
+      {/* Background Ambient Glows */}
       <div className="fixed top-1/4 -left-32 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
       <div className="fixed bottom-1/3 -right-32 w-96 h-96 bg-amber-600/10 rounded-full blur-[140px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }} />
 
-      {/* Top Navbar */}
+      {/* Navbar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/80 backdrop-blur-xl border-b border-white/10 px-6 py-4 max-w-7xl mx-auto shadow-2xl flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
           <div className="relative w-9 h-9 rounded-full overflow-hidden border border-amber-500/40 shadow-sm shadow-amber-500/20 group-hover:border-amber-500 transition-colors">
@@ -245,7 +256,7 @@ export default function Home() {
           <span className="font-bold text-amber-500 tracking-wider text-lg group-hover:text-amber-400 transition-colors">EKAYA HAMI</span>
         </a>
 
-        {/* Desktop Navigation Links */}
+        {/* Navigation Links */}
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-neutral-300">
           <a href="#about" className="hover:text-amber-500 transition-colors">About</a>
           <a href="#videos" className="hover:text-amber-500 transition-colors">Music & Videos</a>
@@ -253,7 +264,7 @@ export default function Home() {
           <a href="#booking" className="hover:text-amber-500 transition-colors">Bookings</a>
         </div>
 
-        {/* Social Icons & Mobile Menu Button */}
+        {/* Social Icons & Mobile Toggle */}
         <div className="flex items-center space-x-4 text-neutral-400">
           <Link href="https://www.instagram.com/ekayahami/" target="_blank" aria-label="Instagram" className="hover:text-amber-500 transition-colors">
             <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
@@ -332,20 +343,20 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-6">Reimagining Folk Heritage</h2>
             
             <p className="text-neutral-300 text-base sm:text-lg leading-relaxed font-light mb-5">
-              The Nepali folk-fusion ensemble <strong>Ekaya Hami</strong> (known as <strong>Ekaya</strong>) was founded in 2024, envisioned by composer and music video director <strong>Shreejan Shyama</strong> alongside filmmaker <strong>Nischal Kisee</strong>. The band made its debut live performance during the <em>Nawa Barsha Purwa Sandhya</em> event.
+              The Nepali folk-fusion ensemble <strong>Ekaya Hami</strong> (known as <strong>Ekaya</strong>) was formed in 2024. It was envisioned and created by composer and music video director <strong>Shreejan Shyama</strong> alongside filmmaker <strong>Nischal Kisee</strong> to revive ancient sounds.
             </p>
             
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mb-6">
-              The word <em>"Ekaya"</em> signifies <strong>unity</strong>, a name suggested by vocalist <strong>Priya Basnet</strong>. Ekaya’s signature musical style seamlessly blends traditional Newa and Nepali instruments—such as the <strong>Sarangi</strong>, <strong>Madal</strong>, <strong>Dhime</strong>, and traditional <strong>Flutes (Bansuri)</strong>—with contemporary acoustic and modern textures. Signed under the independent label <strong>donob orie</strong>, Ekaya continues to revitalize classic heritage tunes for modern audiences.
+              The word <em>"Ekaya"</em> signifies <strong>unity</strong>, a name suggested by vocalist <strong>Priya Basnet</strong>. Ekaya’s signature musical style seamlessly blends traditional Newa and Nepali instruments—such as the <strong>Sarangi</strong>, <strong>Madal</strong>, <strong>Dhime</strong>, and traditional <strong>Flutes (Bansuri)</strong>—with contemporary acoustic textures. Signed under independent label <strong>donob orie</strong>, Ekaya continues to revitalize heritage tunes for audiences worldwide.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-white/10">
               <div>
-                <p className="text-xs text-neutral-500 uppercase tracking-wider">Founded</p>
+                <p className="text-xs text-neutral-500 uppercase tracking-wider">Formed</p>
                 <p className="text-sm font-semibold text-amber-500 mt-0.5">2024</p>
               </div>
               <div>
-                <p className="text-xs text-neutral-500 uppercase tracking-wider">Founders</p>
+                <p className="text-xs text-neutral-500 uppercase tracking-wider">Creators</p>
                 <p className="text-sm font-semibold text-amber-500 mt-0.5">Shreejan Shyama & Nischal Kisee</p>
               </div>
               <div>
@@ -361,10 +372,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Music & Videos Section */}
+      {/* Music & Videos Section (Fast, Ad-Free Cards) */}
       <section id="videos" className="py-20 px-6 max-w-7xl mx-auto border-b border-white/5">
         <div className="text-center mb-10">
-          <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Official YouTube Releases</span>
+          <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Official Releases</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">Featured Music & Videos</h2>
           
           <div className="inline-flex p-1 bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl mt-6 shadow-inner">
@@ -385,32 +396,34 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayedVideos.map((video) => (
-            <div key={video.uniqueKey} className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/40 transition-all duration-500 group flex flex-col justify-between">
-              <div className="relative aspect-video w-full bg-neutral-950">
-                <iframe 
-                  className="w-full h-full" 
-                  src={`https://www.youtube.com/embed/${video.id}`} 
-                  title={video.title} 
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                  allowFullScreen
-                ></iframe>
-              </div>
-              <div className="p-6 flex justify-between items-center flex-1">
-                <div>
-                  <h3 className="font-bold text-white group-hover:text-amber-500 transition-colors text-sm sm:text-base line-clamp-2">{video.title}</h3>
-                  <p className="text-xs text-neutral-400 mt-1">{video.desc}</p>
+            <a 
+              key={video.uniqueKey} 
+              href={video.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/50 hover:scale-[1.02] transition-all duration-300 group flex flex-col justify-between"
+            >
+              <div className="relative aspect-video w-full bg-neutral-950 overflow-hidden">
+                <img 
+                  src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`} 
+                  alt={video.title} 
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                  <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                    <svg className="w-5 h-5 fill-black ml-0.5" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
+                  </div>
                 </div>
-                <a 
-                  href={`https://www.youtube.com/watch?v=${video.id}`} 
-                  target="_blank" 
-                  rel="noreferrer" 
-                  className="shrink-0 ml-4 p-3 bg-white/[0.05] hover:bg-amber-500 hover:text-black text-neutral-300 rounded-2xl border border-white/10 transition-all" 
-                  aria-label="Open video on YouTube"
-                >
-                  <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                </a>
               </div>
-            </div>
+
+              <div className="p-6">
+                <h3 className="font-bold text-white group-hover:text-amber-400 transition-colors text-sm sm:text-base line-clamp-2">{video.title}</h3>
+                <p className="text-xs text-neutral-400 mt-1">{video.desc}</p>
+              </div>
+            </a>
           ))}
         </div>
       </section>
@@ -656,10 +669,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer */}
+      {/* Footer with Correct 2024 Founding Date */}
       <footer className="py-12 border-t border-white/5 text-center text-xs text-neutral-500 space-y-2">
         <p className="text-sm text-neutral-300 font-medium">For Bookings & Press: Contact Manager Sujal Suwal (@sujalsuwall)</p>
-        <p>© {new Date().getFullYear()} Ekaya Hami • Managed under donob orie. All rights reserved.</p>
+        <p>© 2024–{new Date().getFullYear()} Ekaya Hami • Managed under donob orie. All rights reserved.</p>
       </footer>
     </div>
   );
