@@ -18,5 +18,5 @@
 }
 
 .animate-shimmer-wave {
-  animation: shimmerWave 2.5s linear infinite;
+  animation: shimmerWave 6s ease-in-out infinite;
 }
