@@ -15,6 +15,7 @@ interface Member {
 }
 
 interface Video {
+  uniqueKey: string;
   title: string;
   id: string;
   desc: string;
@@ -112,34 +113,15 @@ const MANAGEMENT: Member[] = [
 // Verified Master Video Database from @donoborie YouTube channel
 const VIDEOS: Video[] = [
   {
-    title: 'Jhan Jaka Maya - Ekaya Hami | Live at Asan',
-    id: 'OzyBRsBbeNE',
-    desc: 'Live Performance from Asan, Kathmandu',
-    views: 7600,
-    publishedAt: '2026-07-29',
-  },
-  {
-    title: 'Ratna - Juju Kaji Ranjit with Ekaya Hami | Live at Asan',
-    id: '7dtLDBqayCY',
-    desc: 'Kathmandu Film Festival Collaboration',
-    views: 5200,
-    publishedAt: '2026-07-03',
-  },
-  {
-    title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Acoustic Version',
-    id: 'hCyzUe7hb2Q',
-    desc: 'donob sessions acoustic rendition',
-    views: 27000,
-    publishedAt: '2025-08-14',
-  },
-  {
+    uniqueKey: 'vid-asan-twa',
     title: 'Ekaya Hami - Asan Twa | donob sessions',
     id: '2HTRkmBVE6w',
     desc: 'A fresh folk-fusion rendition of a classic Newa tune',
-    views: 2300000,
+    views: 2300000, // 2.3M Views -> Strict #1 Popular
     publishedAt: '2025-04-04',
   },
   {
+    uniqueKey: 'vid-ratna-cover',
     title: 'Ekaya Hami - Ratna | Cover | donob sessions',
     id: '7dtLDBqayCY',
     desc: 'Classic Nepal Bhasa cover by Ekaya Hami',
@@ -147,6 +129,7 @@ const VIDEOS: Video[] = [
     publishedAt: '2025-02-10',
   },
   {
+    uniqueKey: 'vid-mayosa-mv',
     title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Official Music Video',
     id: 'fC2TbByrlbA',
     desc: 'Official Music Video',
@@ -154,11 +137,36 @@ const VIDEOS: Video[] = [
     publishedAt: '2024-05-10',
   },
   {
+    uniqueKey: 'vid-hissi-mv',
     title: 'Hissi - Ekaya Hami | Official Music Video',
     id: 'OBezCp_2cEY',
     desc: 'Official Music Video',
     views: 109000,
     publishedAt: '2024-01-15',
+  },
+  {
+    uniqueKey: 'vid-mayosa-acoustic',
+    title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Acoustic Version',
+    id: 'hCyzUe7hb2Q',
+    desc: 'donob sessions acoustic rendition',
+    views: 27000,
+    publishedAt: '2025-08-14',
+  },
+  {
+    uniqueKey: 'vid-jhan-jaka-maya',
+    title: 'Jhan Jaka Maya - Ekaya Hami | Live at Asan',
+    id: 'OzyBRsBbeNE',
+    desc: 'Live Performance from Asan, Kathmandu',
+    views: 7600,
+    publishedAt: '2026-07-29',
+  },
+  {
+    uniqueKey: 'vid-ratna-asan-live',
+    title: 'Ratna - Juju Kaji Ranjit with Ekaya Hami | Live at Asan',
+    id: '7dtLDBqayCY',
+    desc: 'Kathmandu Film Festival Collaboration',
+    views: 5200,
+    publishedAt: '2026-07-03',
   },
 ];
 
@@ -378,7 +386,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {displayedVideos.map((video) => (
-            <div key={video.id} className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/40 transition-all duration-500 group flex flex-col justify-between">
+            <div key={video.uniqueKey} className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/40 transition-all duration-500 group flex flex-col justify-between">
               <div className="relative aspect-video w-full bg-neutral-950">
                 <iframe 
                   className="w-full h-full" 
@@ -541,6 +549,93 @@ export default function Home() {
         </div>
       )}
 
+      {/* Booking Modal */}
+      {isBookingOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in" onClick={() => setIsBookingOpen(false)}>
+          <div className="bg-[#121215]/95 border border-white/20 max-w-lg w-full rounded-3xl p-6 sm:p-8 relative shadow-2xl transition-all transform scale-100" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setIsBookingOpen(false)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
+              ✕
+            </button>
+
+            <span className="text-amber-500 text-xs font-bold uppercase tracking-widest block mb-1">Live Performance Inquiry</span>
+            <h3 className="text-2xl font-bold text-white mb-2">Book Ekaya Hami</h3>
+            <p className="text-xs text-neutral-400 mb-6">Directly routes to Manager Sujal Suwal (@sujalsuwall).</p>
+
+            <form onSubmit={handleBookingSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-neutral-300 mb-1">Name / Organization *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="e.g. Nepal Music Festival"
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-300 mb-1">Contact Info (Phone/Email) *</label>
+                  <input
+                    type="text"
+                    required
+                    value={formData.contact}
+                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                    placeholder="e.g. +977 9800000000"
+                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-neutral-300 mb-1">Event Date *</label>
+                  <input
+                    type="date"
+                    required
+                    value={formData.eventDate}
+                    onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-neutral-300 mb-1">Event Location / City *</label>
+                <input
+                  type="text"
+                  required
+                  value={formData.location}
+                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                  placeholder="e.g. Bhaktapur Durbar Square / Kathmandu"
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-semibold text-neutral-300 mb-1">Event Details & Requirements</label>
+                <textarea
+                  rows={3}
+                  value={formData.details}
+                  onChange={(e) => setFormData({ ...formData, details: e.target.value })}
+                  placeholder="Provide info about stage size, duration, expected audience..."
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+
+              {bookingStatus && (
+                <p className="text-xs text-amber-400 font-medium bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/20">{bookingStatus}</p>
+              )}
+
+              <button
+                type="submit"
+                className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm mt-2"
+              >
+                Send Inquiry to Management
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* Booking Section */}
       <section id="booking" className="py-20 px-6 max-w-4xl mx-auto">
         <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
@@ -558,93 +653,12 @@ export default function Home() {
               Submit Booking Request Form
             </button>
             
-            <a href="https://www.instagram.com/sujalsuwall/" target="_blank" rel="noreferrer" className="bg-white/[0.05] hover:bg-white/[0.1] backdrop-blur-xl border border-white/10 hover:border-amber-500/50 text-neutral-200 font-semibold px-8 py-3.5 rounded-2xl transition-all duration-300 transform hover:scale-105 text-sm flex items-center space-x-2">
-              <span>Contact Manager on Instagram</span>
+            <a href="https://www.instagram.com/sujalsuwall/" target="_blank" rel="noreferrer" className="bg-white/[0.07] hover:bg-white/[0.12] border border-white/15 text-white font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
+              Contact Manager on Instagram
             </a>
           </div>
         </div>
       </section>
-
-      {/* Booking Modal */}
-      {isBookingOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md" onClick={() => setIsBookingOpen(false)}>
-          <div className="bg-[#101012]/80 backdrop-blur-2xl border border-white/15 w-full max-w-lg rounded-3xl p-6 sm:p-8 relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setIsBookingOpen(false)} aria-label="Close booking form" className="absolute top-5 right-5 text-neutral-400 hover:text-white text-lg font-bold">
-              ✕
-            </button>
-            <h3 className="text-2xl font-bold text-amber-500 mb-1">Performance Inquiry</h3>
-            <p className="text-xs text-neutral-400 mb-6">
-              Inquiries are received directly by <strong>Sujal Suwal (Manager)</strong>.
-            </p>
-
-            <form onSubmit={handleBookingSubmit} className="space-y-4 text-left">
-              <div>
-                <label className="block text-xs text-neutral-300 font-medium mb-1">Your Name / Organization</label>
-                <input 
-                  required 
-                  type="text" 
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Full Name or Event Org" 
-                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" 
-                />
-              </div>
-              <div>
-                <label className="block text-xs text-neutral-300 font-medium mb-1">Email / Phone</label>
-                <input 
-                  required 
-                  type="text" 
-                  value={formData.contact}
-                  onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                  placeholder="Contact Details" 
-                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" 
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-xs text-neutral-300 font-medium mb-1">Event Date</label>
-                  <input 
-                    required 
-                    type="date" 
-                    value={formData.eventDate}
-                    onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" 
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-neutral-300 font-medium mb-1">Event Location</label>
-                  <input 
-                    required 
-                    type="text" 
-                    value={formData.location}
-                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                    placeholder="City / Venue" 
-                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" 
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs text-neutral-300 font-medium mb-1">Event Type & Details</label>
-                <textarea 
-                  rows={3} 
-                  value={formData.details}
-                  onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-                  placeholder="Festival, Concert, Wedding, Corporate, etc." 
-                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none"
-                />
-              </div>
-
-              {bookingStatus && (
-                <p className="text-xs text-amber-500 font-medium text-center">{bookingStatus}</p>
-              )}
-
-              <button type="submit" className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-all shadow-md shadow-amber-500/20">
-                Send Request
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
 
       {/* Footer */}
       <footer className="py-12 border-t border-white/5 text-center text-xs text-neutral-500 space-y-2">
