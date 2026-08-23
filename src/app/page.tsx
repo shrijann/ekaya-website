@@ -192,11 +192,8 @@ export default function Home() {
   const [bookingStatus, setBookingStatus] = useState('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
-  
-  // Track active playing video ID
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
 
-  // Form State
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
@@ -205,13 +202,12 @@ export default function Home() {
     details: '',
   });
 
-  // Fast memoized list switching
   const displayedVideos = useMemo(() => {
     return activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
   }, [activeTab]);
 
   const handleTabChange = (tab: 'recent' | 'popular') => {
-    setPlayingVideoKey(null); // Reset playing state on tab change to prevent lag
+    setPlayingVideoKey(null);
     setActiveTab(tab);
   };
 
@@ -260,7 +256,6 @@ export default function Home() {
           <span className="font-bold text-amber-500 tracking-wider text-lg group-hover:text-amber-400 transition-colors">EKAYA HAMI</span>
         </a>
 
-        {/* Navigation Links */}
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-neutral-300">
           <a href="#about" className="hover:text-amber-500 transition-colors">About</a>
           <a href="#videos" className="hover:text-amber-500 transition-colors">Music & Videos</a>
@@ -268,7 +263,6 @@ export default function Home() {
           <a href="#booking" className="hover:text-amber-500 transition-colors">Bookings</a>
         </div>
 
-        {/* Social Icons & Mobile Toggle */}
         <div className="flex items-center space-x-4 text-neutral-400">
           <Link href="https://www.instagram.com/ekayahami/" target="_blank" aria-label="Instagram" className="hover:text-amber-500 transition-colors">
             <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
@@ -310,27 +304,39 @@ export default function Home() {
 
         <div className="relative z-10 flex flex-col items-center max-w-3xl">
           <a href="#top" className="relative group cursor-pointer">
-            <div className="relative w-36 h-36 rounded-full p-1 bg-neutral-800 mb-6 border border-white/20 group-hover:scale-105 transition-all duration-300">
+            <div className="relative w-36 h-36 rounded-full p-1 bg-neutral-800 mb-6 border border-white/20 group-hover:border-amber-500/80 group-hover:scale-105 transition-all duration-300 shadow-[0_0_25px_rgba(245,158,11,0.2)]">
               <div className="relative w-full h-full rounded-full overflow-hidden">
                 <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
               </div>
             </div>
           </a>
 
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-400 px-4 py-1.5 bg-amber-500/10 rounded-full border border-amber-500/20 mb-4">
-            Signed Under donob orie
-          </span>
-          <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-white mb-4">EKAYA HAMI</h1>
-          <p className="text-lg sm:text-xl text-neutral-300 font-light max-w-2xl leading-relaxed">
+          {/* Glowing Badge */}
+          <div className="relative group mb-4">
+            <div className="absolute -inset-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full blur-sm opacity-60 group-hover:opacity-100 transition duration-500 animate-pulse" />
+            <span className="relative text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-300 px-4 py-1.5 bg-black/80 rounded-full border border-amber-500/40 shadow-[0_0_15px_rgba(245,158,11,0.3)] block">
+              Signed Under donob orie
+            </span>
+          </div>
+
+          {/* Animated & Glowing Title */}
+          <div className="relative group cursor-pointer my-2">
+            <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
+            <h1 className="relative text-5xl sm:text-7xl font-extrabold tracking-tight text-white group-hover:text-amber-400 group-hover:scale-105 group-hover:drop-shadow-[0_0_25px_rgba(245,158,11,0.6)] transition-all duration-300">
+              EKAYA HAMI
+            </h1>
+          </div>
+
+          <p className="text-lg sm:text-xl text-neutral-300 font-light max-w-2xl leading-relaxed mt-2">
             Nepali Folk-Fusion Ensemble from Bhaktapur, Nepal
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
-            <a href="#videos" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all shadow-lg shadow-amber-500/20">
+            <a href="#videos" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all shadow-lg shadow-amber-500/20 hover:scale-105">
               <span>Watch Videos</span>
             </a>
             
-            <button onClick={() => setIsBookingOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-neutral-100 font-semibold px-8 py-3.5 rounded-2xl transition-all">
+            <button onClick={() => setIsBookingOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-neutral-100 font-semibold px-8 py-3.5 rounded-2xl transition-all hover:scale-105">
               <span>Book Live Performance</span>
             </button>
           </div>
@@ -374,7 +380,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Music & Videos Section (Click Thumbnail directly to Play) */}
+      {/* Videos Section */}
       <section id="videos" className="py-16 px-6 max-w-7xl mx-auto border-b border-white/5">
         <div className="text-center mb-10">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Official Releases</span>
@@ -405,7 +411,6 @@ export default function Home() {
                 key={video.uniqueKey} 
                 className="bg-[#121215] border border-white/10 hover:border-amber-500/50 rounded-3xl overflow-hidden transition-all duration-300 flex flex-col justify-between"
               >
-                {/* Clickable Video / Thumbnail */}
                 <div 
                   onClick={() => !isPlaying && setPlayingVideoKey(video.uniqueKey)}
                   className="relative aspect-video w-full bg-neutral-950 cursor-pointer group"
@@ -437,7 +442,6 @@ export default function Home() {
                   )}
                 </div>
 
-                {/* Card Info & Direct YouTube Link */}
                 <div className="p-6 flex flex-col justify-between flex-grow">
                   <div>
                     <h3 className="font-bold text-white text-sm sm:text-base line-clamp-2">{video.title}</h3>
@@ -538,7 +542,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Member Profile Bio Modal */}
+      {/* Member Bio Modal */}
       {selectedMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setSelectedMember(null)}>
           <div className="bg-[#121215] border border-white/20 max-w-md w-full rounded-3xl p-6 sm:p-8 relative text-center" onClick={(e) => e.stopPropagation()}>
@@ -581,7 +585,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Interactive Photo Zoom Modal */}
+      {/* Image Zoom Modal */}
       {zoomedImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setZoomedImage(null)}>
           <div className="relative max-w-3xl max-h-[85vh] w-full h-full flex items-center justify-center p-2" onClick={(e) => e.stopPropagation()}>
