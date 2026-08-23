@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, FormEvent } from 'react';
+import { useState, useEffect, useMemo, FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -193,7 +193,7 @@ export default function Home() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   
-  // Track active inline playing video ID
+  // Track active playing video ID
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
 
   // Form State
@@ -205,7 +205,15 @@ export default function Home() {
     details: '',
   });
 
-  const displayedVideos = activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
+  // Fast memoized list switching
+  const displayedVideos = useMemo(() => {
+    return activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
+  }, [activeTab]);
+
+  const handleTabChange = (tab: 'recent' | 'popular') => {
+    setPlayingVideoKey(null); // Reset playing state on tab change to prevent lag
+    setActiveTab(tab);
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -243,14 +251,10 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
       
-      {/* Background Ambient Glows */}
-      <div className="fixed top-1/4 -left-32 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
-      <div className="fixed bottom-1/3 -right-32 w-96 h-96 bg-amber-600/10 rounded-full blur-[140px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }} />
-
       {/* Navbar */}
-      <nav className="sticky top-0 z-40 bg-[#070708]/80 backdrop-blur-xl border-b border-white/10 px-6 py-4 max-w-7xl mx-auto shadow-2xl flex items-center justify-between">
+      <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
-          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-amber-500/40 shadow-sm shadow-amber-500/20 group-hover:border-amber-500 transition-colors">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border border-amber-500/40 group-hover:border-amber-500 transition-colors">
             <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
           </div>
           <span className="font-bold text-amber-500 tracking-wider text-lg group-hover:text-amber-400 transition-colors">EKAYA HAMI</span>
@@ -291,7 +295,7 @@ export default function Home() {
 
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
-        <div className="md:hidden sticky top-[73px] z-30 bg-[#070708]/95 border-b border-white/10 backdrop-blur-xl px-6 py-4 flex flex-col space-y-4 text-center font-medium">
+        <div className="md:hidden sticky top-[73px] z-30 bg-[#070708] border-b border-white/10 px-6 py-4 flex flex-col space-y-4 text-center font-medium">
           <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">About</a>
           <a href="#videos" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">Music & Videos</a>
           <a href="#members" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">Band & Crew</a>
@@ -300,33 +304,33 @@ export default function Home() {
       )}
 
       {/* Hero Header */}
-      <header className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6 border-b border-white/5 overflow-hidden">
-        <Image src="/ekaya-website/images/ekayaxdonob.jpg" alt="Ekaya Band Cover" fill priority className="object-cover opacity-25 scale-105 transition-transform duration-1000" />
+      <header className="relative min-h-[80vh] flex flex-col items-center justify-center text-center px-6 border-b border-white/5 overflow-hidden">
+        <Image src="/ekaya-website/images/ekayaxdonob.jpg" alt="Ekaya Band Cover" fill priority className="object-cover opacity-25" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-[#070708]/60 to-[#070708]/30" />
 
         <div className="relative z-10 flex flex-col items-center max-w-3xl">
           <a href="#top" className="relative group cursor-pointer">
-            <div className="relative w-36 h-36 rounded-full p-1 bg-gradient-to-b from-amber-500/50 to-white/10 backdrop-blur-2xl mb-6 shadow-2xl shadow-amber-500/10 group-hover:scale-105 transition-all duration-500">
-              <div className="relative w-full h-full rounded-full overflow-hidden border border-white/20">
+            <div className="relative w-36 h-36 rounded-full p-1 bg-neutral-800 mb-6 border border-white/20 group-hover:scale-105 transition-all duration-300">
+              <div className="relative w-full h-full rounded-full overflow-hidden">
                 <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
               </div>
             </div>
           </a>
 
-          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-400 px-4 py-1.5 bg-amber-500/10 backdrop-blur-xl rounded-full border border-amber-500/20 mb-4 shadow-inner">
+          <span className="text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-400 px-4 py-1.5 bg-amber-500/10 rounded-full border border-amber-500/20 mb-4">
             Signed Under donob orie
           </span>
-          <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-white mb-4 drop-shadow-lg">EKAYA HAMI</h1>
+          <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight text-white mb-4">EKAYA HAMI</h1>
           <p className="text-lg sm:text-xl text-neutral-300 font-light max-w-2xl leading-relaxed">
             Nepali Folk-Fusion Ensemble from Bhaktapur, Nepal
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
-            <a href="#videos" className="relative inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 shadow-[0_8px_30px_rgb(245,158,11,0.3)] hover:shadow-[0_12px_40px_rgb(245,158,11,0.5)] active:scale-95">
+            <a href="#videos" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all shadow-lg shadow-amber-500/20">
               <span>Watch Videos</span>
             </a>
             
-            <button onClick={() => setIsBookingOpen(true)} className="relative inline-flex items-center space-x-2 bg-white/[0.07] hover:bg-white/[0.12] backdrop-blur-xl border border-white/15 hover:border-amber-500/50 text-neutral-100 hover:text-amber-400 font-semibold px-8 py-3.5 rounded-2xl transition-all duration-300 transform hover:-translate-y-1 hover:scale-105 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] active:scale-95">
+            <button onClick={() => setIsBookingOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-neutral-100 font-semibold px-8 py-3.5 rounded-2xl transition-all">
               <span>Book Live Performance</span>
             </button>
           </div>
@@ -334,10 +338,8 @@ export default function Home() {
       </header>
 
       {/* About Section */}
-      <section id="about" className="py-20 px-6 max-w-5xl mx-auto border-b border-white/5">
-        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
-          <div className="absolute top-0 right-0 -mt-12 -mr-12 w-56 h-56 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
-          
+      <section id="about" className="py-16 px-6 max-w-5xl mx-auto border-b border-white/5">
+        <div className="bg-[#121215] border border-white/10 rounded-3xl p-8 sm:p-12 relative overflow-hidden">
           <div className="max-w-3xl relative z-10">
             <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">About The Ensemble</span>
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-6">Reimagining Folk Heritage</h2>
@@ -372,22 +374,22 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Music & Videos Section (Play Direct or Open YouTube) */}
-      <section id="videos" className="py-20 px-6 max-w-7xl mx-auto border-b border-white/5">
+      {/* Music & Videos Section (Click Thumbnail directly to Play) */}
+      <section id="videos" className="py-16 px-6 max-w-7xl mx-auto border-b border-white/5">
         <div className="text-center mb-10">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Official Releases</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">Featured Music & Videos</h2>
           
-          <div className="inline-flex p-1 bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl mt-6 shadow-inner">
+          <div className="inline-flex p-1 bg-neutral-900 border border-white/10 rounded-2xl mt-6">
             <button 
-              onClick={() => setActiveTab('recent')} 
-              className={`px-6 py-2.5 text-xs font-semibold rounded-xl transition-all duration-300 ${activeTab === 'recent' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-neutral-400 hover:text-white'}`}
+              onClick={() => handleTabChange('recent')} 
+              className={`px-6 py-2.5 text-xs font-semibold rounded-xl transition-all ${activeTab === 'recent' ? 'bg-amber-500 text-black font-bold' : 'text-neutral-400 hover:text-white'}`}
             >
               Recent Releases
             </button>
             <button 
-              onClick={() => setActiveTab('popular')} 
-              className={`px-6 py-2.5 text-xs font-semibold rounded-xl transition-all duration-300 ${activeTab === 'popular' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-neutral-400 hover:text-white'}`}
+              onClick={() => handleTabChange('popular')} 
+              className={`px-6 py-2.5 text-xs font-semibold rounded-xl transition-all ${activeTab === 'popular' ? 'bg-amber-500 text-black font-bold' : 'text-neutral-400 hover:text-white'}`}
             >
               Popular Releases
             </button>
@@ -401,10 +403,13 @@ export default function Home() {
             return (
               <div 
                 key={video.uniqueKey} 
-                className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/50 transition-all duration-300 flex flex-col justify-between"
+                className="bg-[#121215] border border-white/10 hover:border-amber-500/50 rounded-3xl overflow-hidden transition-all duration-300 flex flex-col justify-between"
               >
-                {/* Video / Thumbnail Container */}
-                <div className="relative aspect-video w-full bg-neutral-950 overflow-hidden">
+                {/* Clickable Video / Thumbnail */}
+                <div 
+                  onClick={() => !isPlaying && setPlayingVideoKey(video.uniqueKey)}
+                  className="relative aspect-video w-full bg-neutral-950 cursor-pointer group"
+                >
                   {isPlaying ? (
                     <iframe
                       src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
@@ -414,47 +419,37 @@ export default function Home() {
                       allowFullScreen
                     />
                   ) : (
-                    <div 
-                      onClick={() => setPlayingVideoKey(video.uniqueKey)}
-                      className="relative w-full h-full cursor-pointer group"
-                    >
+                    <>
                       <img 
                         src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`} 
                         alt={video.title} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                         loading="lazy"
                       />
-                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                        <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                          <svg className="w-5 h-5 fill-black ml-0.5" viewBox="0 0 24 24">
+                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                        <div className="w-14 h-14 rounded-full bg-amber-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                          <svg className="w-6 h-6 fill-black ml-1" viewBox="0 0 24 24">
                             <path d="M8 5v14l11-7z"/>
                           </svg>
                         </div>
                       </div>
-                    </div>
+                    </>
                   )}
                 </div>
 
-                {/* Card Info & Direct Link */}
+                {/* Card Info & Direct YouTube Link */}
                 <div className="p-6 flex flex-col justify-between flex-grow">
                   <div>
                     <h3 className="font-bold text-white text-sm sm:text-base line-clamp-2">{video.title}</h3>
                     <p className="text-xs text-neutral-400 mt-1">{video.desc}</p>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                    <button
-                      onClick={() => setPlayingVideoKey(isPlaying ? null : video.uniqueKey)}
-                      className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors"
-                    >
-                      {isPlaying ? 'Close Player' : 'Play Here ▶'}
-                    </button>
-
+                  <div className="mt-6 pt-4 border-t border-white/5 flex items-center justify-end">
                     <a 
                       href={video.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center space-x-1.5 text-xs text-neutral-400 hover:text-white transition-colors bg-white/[0.05] hover:bg-white/10 px-3 py-1.5 rounded-xl border border-white/10"
+                      className="inline-flex items-center space-x-1.5 text-xs text-neutral-400 hover:text-white transition-colors bg-white/5 hover:bg-white/10 px-3.5 py-1.5 rounded-xl border border-white/10"
                     >
                       <span>Watch on YouTube</span>
                       <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
@@ -471,7 +466,7 @@ export default function Home() {
       </section>
 
       {/* Band Members Section */}
-      <section id="members" className="py-20 px-6 max-w-7xl mx-auto border-b border-white/5">
+      <section id="members" className="py-16 px-6 max-w-7xl mx-auto border-b border-white/5">
         <div className="text-center mb-12">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Ensemble & Performers</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">Band Members</h2>
@@ -481,13 +476,13 @@ export default function Home() {
           {MUSICIANS.map((member) => (
             <div
               key={member.name}
-              className="group relative bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:shadow-2xl hover:shadow-amber-500/10"
+              className="group relative bg-[#121215] border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1"
             >
               <div 
                 onClick={() => setZoomedImage({ src: member.img, alt: member.name })}
-                className="relative w-32 h-32 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all duration-500 mb-4 shadow-xl cursor-pointer"
+                className="relative w-32 h-32 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all mb-4 cursor-pointer"
               >
-                <Image src={member.img} alt={member.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
+                <Image src={member.img} alt={member.name} fill className="object-cover group-hover:scale-105 transition-transform" />
               </div>
 
               <h3 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{member.name}</h3>
@@ -498,7 +493,7 @@ export default function Home() {
                   e.stopPropagation();
                   setSelectedMember(member);
                 }}
-                className="mt-5 px-5 py-2 bg-white/[0.06] hover:bg-amber-500 hover:text-black rounded-2xl border border-white/10 text-xs font-semibold text-neutral-200 transition-all active:scale-95 shadow-md hover:shadow-amber-500/20"
+                className="mt-5 px-5 py-2 bg-white/5 hover:bg-amber-500 hover:text-black rounded-2xl border border-white/10 text-xs font-semibold text-neutral-200 transition-all"
               >
                 View Bio →
               </button>
@@ -516,13 +511,13 @@ export default function Home() {
             {MANAGEMENT.map((member) => (
               <div
                 key={member.name}
-                className="group relative bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 w-64 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:shadow-2xl hover:shadow-amber-500/10"
+                className="group relative bg-[#121215] border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 w-64 flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1"
               >
                 <div 
                   onClick={() => setZoomedImage({ src: member.img, alt: member.name })}
-                  className="relative w-28 h-28 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all duration-500 mb-4 shadow-xl cursor-pointer"
+                  className="relative w-28 h-28 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all mb-4 cursor-pointer"
                 >
-                  <Image src={member.img} alt={member.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
+                  <Image src={member.img} alt={member.name} fill className="object-cover group-hover:scale-105 transition-transform" />
                 </div>
 
                 <h4 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{member.name}</h4>
@@ -533,7 +528,7 @@ export default function Home() {
                     e.stopPropagation();
                     setSelectedMember(member);
                   }}
-                  className="mt-5 px-5 py-2 bg-white/[0.06] hover:bg-amber-500 hover:text-black rounded-2xl border border-white/10 text-xs font-semibold text-neutral-200 transition-all active:scale-95 shadow-md hover:shadow-amber-500/20"
+                  className="mt-5 px-5 py-2 bg-white/5 hover:bg-amber-500 hover:text-black rounded-2xl border border-white/10 text-xs font-semibold text-neutral-200 transition-all"
                 >
                   View Profile →
                 </button>
@@ -545,15 +540,15 @@ export default function Home() {
 
       {/* Member Profile Bio Modal */}
       {selectedMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in" onClick={() => setSelectedMember(null)}>
-          <div className="bg-[#121215]/90 border border-white/20 max-w-md w-full rounded-3xl p-6 sm:p-8 relative shadow-2xl text-center transition-all transform scale-100" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setSelectedMember(null)}>
+          <div className="bg-[#121215] border border-white/20 max-w-md w-full rounded-3xl p-6 sm:p-8 relative text-center" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setSelectedMember(null)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
               ✕
             </button>
 
             <div 
               onClick={() => setZoomedImage({ src: selectedMember.img, alt: selectedMember.name })}
-              className="relative w-32 h-32 rounded-full mx-auto overflow-hidden border-2 border-amber-500/80 shadow-2xl mb-4 cursor-pointer hover:scale-105 transition-transform"
+              className="relative w-32 h-32 rounded-full mx-auto overflow-hidden border-2 border-amber-500/80 mb-4 cursor-pointer hover:scale-105 transition-transform"
             >
               <Image src={selectedMember.img} alt={selectedMember.name} fill className="object-cover" />
             </div>
@@ -561,7 +556,7 @@ export default function Home() {
             <h3 className="text-2xl font-bold text-white">{selectedMember.name}</h3>
             <p className="text-xs text-amber-500 font-bold uppercase tracking-widest mt-1 mb-4">{selectedMember.role}</p>
 
-            <p className="text-sm text-neutral-300 leading-relaxed font-light mb-6 text-left bg-white/[0.03] p-4 rounded-2xl border border-white/10">
+            <p className="text-sm text-neutral-300 leading-relaxed font-light mb-6 text-left bg-white/5 p-4 rounded-2xl border border-white/10">
               {selectedMember.bio}
             </p>
 
@@ -578,7 +573,7 @@ export default function Home() {
               </div>
             )}
 
-            <a href={selectedMember.link} target="_blank" rel="noreferrer" className="inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-400 text-black font-semibold px-6 py-2.5 rounded-2xl transition-all text-xs shadow-lg shadow-amber-500/20">
+            <a href={selectedMember.link} target="_blank" rel="noreferrer" className="inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-400 text-black font-semibold px-6 py-2.5 rounded-2xl transition-all text-xs">
               <span>Follow on Instagram</span>
               <span>→</span>
             </a>
@@ -588,12 +583,12 @@ export default function Home() {
 
       {/* Interactive Photo Zoom Modal */}
       {zoomedImage && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl animate-fade-in" onClick={() => setZoomedImage(null)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setZoomedImage(null)}>
           <div className="relative max-w-3xl max-h-[85vh] w-full h-full flex items-center justify-center p-2" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setZoomedImage(null)} aria-label="Close image preview" className="absolute top-2 right-2 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border border-white/20 transition-all z-10">
+            <button onClick={() => setZoomedImage(null)} aria-label="Close image preview" className="absolute top-2 right-2 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border border-white/20 z-10">
               ✕
             </button>
-            <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
+            <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20">
               <Image src={zoomedImage.src} alt={zoomedImage.alt} fill className="object-contain" priority />
             </div>
           </div>
@@ -602,8 +597,8 @@ export default function Home() {
 
       {/* Booking Modal */}
       {isBookingOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in" onClick={() => setIsBookingOpen(false)}>
-          <div className="bg-[#121215]/95 border border-white/20 max-w-lg w-full rounded-3xl p-6 sm:p-8 relative shadow-2xl transition-all transform scale-100" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsBookingOpen(false)}>
+          <div className="bg-[#121215] border border-white/20 max-w-lg w-full rounded-3xl p-6 sm:p-8 relative" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setIsBookingOpen(false)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
               ✕
             </button>
@@ -621,7 +616,7 @@ export default function Home() {
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   placeholder="e.g. Nepal Music Festival"
-                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -634,7 +629,7 @@ export default function Home() {
                     value={formData.contact}
                     onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
                     placeholder="e.g. +977 9800000000"
-                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div>
@@ -644,7 +639,7 @@ export default function Home() {
                     required
                     value={formData.eventDate}
                     onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
                   />
                 </div>
               </div>
@@ -657,7 +652,7 @@ export default function Home() {
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                   placeholder="e.g. Bhaktapur Durbar Square / Kathmandu"
-                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -668,7 +663,7 @@ export default function Home() {
                   value={formData.details}
                   onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                   placeholder="Provide info about stage size, duration, expected audience..."
-                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
 
@@ -688,8 +683,8 @@ export default function Home() {
       )}
 
       {/* Booking Section */}
-      <section id="booking" className="py-20 px-6 max-w-4xl mx-auto">
-        <div className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]">
+      <section id="booking" className="py-16 px-6 max-w-4xl mx-auto">
+        <div className="bg-[#121215] border border-white/10 rounded-3xl p-8 sm:p-12 text-center relative overflow-hidden">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Live Performances & Inquiries</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-3">Book Ekaya Hami</h2>
           <p className="text-neutral-300 text-xs sm:text-sm max-w-lg mx-auto mb-2">
@@ -700,11 +695,11 @@ export default function Home() {
           </p>
 
           <div className="flex flex-wrap justify-center items-center gap-4">
-            <button onClick={() => setIsBookingOpen(true)} className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all duration-300 transform hover:scale-105 shadow-xl shadow-amber-500/20 text-sm">
+            <button onClick={() => setIsBookingOpen(true)} className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
               Submit Booking Request Form
             </button>
             
-            <a href="https://www.instagram.com/sujalsuwall/" target="_blank" rel="noreferrer" className="bg-white/[0.07] hover:bg-white/[0.12] border border-white/15 text-white font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
+            <a href="https://www.instagram.com/sujalsuwall/" target="_blank" rel="noreferrer" className="bg-white/10 hover:bg-white/20 border border-white/15 text-white font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
               Contact Manager on Instagram
             </a>
           </div>
