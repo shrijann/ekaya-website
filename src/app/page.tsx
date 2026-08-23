@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -14,115 +14,157 @@ interface Member {
   instruments?: string[];
 }
 
+interface Video {
+  title: string;
+  id: string;
+  desc: string;
+}
+
+const MUSICIANS: Member[] = [
+  {
+    name: 'Shreejan Shyama',
+    role: 'Director & Sarangi',
+    handle: '@shreejanshyamaa',
+    link: 'https://www.instagram.com/shreejanshyamaa/',
+    img: '/ekaya-website/images/members/shreejanshyama.jpg',
+    bio: 'Musical director and Sarangi craftsman. Shreejan blends traditional Nepali melodic structures with modern acoustic arrangements, leading the ensemble’s creative direction.',
+    instruments: ['Sarangi', 'Director', 'Arrangements'],
+  },
+  {
+    name: 'Priya Basnet',
+    role: 'Lead Vocalist',
+    handle: '@priyaa.basnett',
+    link: 'https://www.instagram.com/priyaa.basnett/',
+    img: '/ekaya-website/images/members/priya.jpg',
+    bio: 'The soulful voice of Ekaya Hami. Priya brings deep emotion and classical precision to folk compositions, weaving timeless vocal stories across modern soundscapes.',
+    instruments: ['Lead Vocals'],
+  },
+  {
+    name: 'Shrijan Maharjan',
+    role: 'Flutist',
+    handle: '@shrijann_',
+    link: 'https://www.instagram.com/shrijann_/',
+    img: '/ekaya-website/images/members/shrijan.jpg',
+    bio: 'Master of classical and folk flute (Bansuri). Shrijan adds airy, transcendent atmospheric layers that define Ekaya Hami’s signature folk-fusion sound.',
+    instruments: ['Bansuri (Flute)', 'Woodwinds'],
+  },
+  {
+    name: 'Shreena Tyataa',
+    role: 'Guitarist',
+    handle: '@shreena.guitarcore',
+    link: 'https://www.instagram.com/shreena.guitarcore/',
+    img: '/ekaya-website/images/members/shreena.jpg',
+    bio: 'Providing harmonic structure and acoustic dynamics, Shreena fuses western fingerstyle techniques with subtle Eastern modal progressions.',
+    instruments: ['Acoustic Guitar', 'Rhythm Guitar'],
+  },
+  {
+    name: 'Bishal Basi',
+    role: 'Percussionist & Madal',
+    handle: '@bishalbasii',
+    link: 'https://www.instagram.com/bishalbasii/',
+    img: '/ekaya-website/images/members/bishalbasi.jpg',
+    bio: 'Anchoring the rhythmic energy of the ensemble, Bishal drives the beat with traditional Madal patterns and intricate folk polyrhythms.',
+    instruments: ['Madal', 'Percussion'],
+  },
+  {
+    name: 'Sudeep Chawal',
+    role: 'Effects & Taa',
+    handle: '@sudeepchawall',
+    link: 'https://www.instagram.com/sudeepchawall/',
+    img: '/ekaya-website/images/members/sudeep.jpg',
+    bio: 'Merging tradition with electronic ambiance, Sudeep performs traditional Taa while engineering sonic depth and real-time audio effects for live shows.',
+    instruments: ['Taa', 'Live Sound Effects'],
+  },
+  {
+    name: 'Amulya Rajchal',
+    role: 'Percussionist',
+    handle: '@amulya_tuned',
+    link: 'https://www.instagram.com/amulya_tuned/',
+    img: '/ekaya-website/images/members/amulya.jpg',
+    bio: 'Bringing high-octane percussive dynamics and syncopated grooves, Amulya complements the rhythm section with intricate regional drumming styles.',
+    instruments: ['Percussion', 'Tuned Rhythm'],
+  },
+];
+
+const MANAGEMENT: Member[] = [
+  {
+    name: 'Sujal Suwal',
+    role: 'Band Manager',
+    handle: '@sujalsuwall',
+    link: 'https://www.instagram.com/sujalsuwall/',
+    img: '/ekaya-website/images/members/sujalsuwal.jpg',
+    bio: 'Managing band logistics, tour bookings, and label communications under donob orie. Sujal coordinates all live performances and strategic operations.',
+    instruments: ['Management', 'Operations'],
+  },
+  {
+    name: 'Sujan Sujakhu',
+    role: 'Crew / Production Team',
+    handle: '@sujansujakhuu',
+    link: 'https://www.instagram.com/sujansujakhuu/',
+    img: '/ekaya-website/images/members/sujansujakhu.jpg',
+    bio: 'Overseeing stage setup, technical execution, and audio engineering ensuring seamless live performance quality for every Ekaya show.',
+    instruments: ['Stage Tech', 'Production'],
+  },
+];
+
+const POPULAR_VIDEOS: Video[] = [
+  { title: 'Asan Twa - Ekaya Hami | donob sessions', id: '2HTRkmBVE6w', desc: 'A fresh folk-fusion rendition of a classic Newa tune' },
+  { title: 'Mayosa - Shreejan, Priya & Ekaya Hami', id: 'fC2TbByrlbA', desc: 'Official Music Video' },
+];
+
+const RECENT_VIDEOS: Video[] = [
+  { title: 'Hissi - Ekaya Hami | Official Music Video', id: 'OBezCp_2cEY', desc: 'Latest Single Release' },
+  { title: 'Mayosa - Official Lyrics Video', id: 'aiz_ivdBRrc', desc: 'Lyrics & Acoustic Visualizer' },
+];
+
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'popular' | 'recent'>('popular');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [bookingStatus, setBookingStatus] = useState('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
 
-  const musicians: Member[] = [
-    {
-      name: 'Shreejan Shyama',
-      role: 'Director & Sarangi',
-      handle: '@shreejanshyamaa',
-      link: 'https://www.instagram.com/shreejanshyamaa/',
-      img: '/ekaya-website/images/members/shreejanshyama.jpg',
-      bio: 'Musical director and Sarangi craftsman. Shreejan blends traditional Nepali melodic structures with modern acoustic arrangements, leading the ensemble’s creative direction.',
-      instruments: ['Sarangi', 'Director', 'Arrangements'],
-    },
-    {
-      name: 'Priya Basnet',
-      role: 'Lead Vocalist',
-      handle: '@priyaa.basnett',
-      link: 'https://www.instagram.com/priyaa.basnett/',
-      img: '/ekaya-website/images/members/priya.jpg',
-      bio: 'The soulful voice of Ekaya Hami. Priya brings deep emotion and classical precision to folk compositions, weaving timeless vocal stories across modern soundscapes.',
-      instruments: ['Lead Vocals'],
-    },
-    {
-      name: 'Shrijan Maharjan',
-      role: 'Flutist',
-      handle: '@shrijann_',
-      link: 'https://www.instagram.com/shrijann_/',
-      img: '/ekaya-website/images/members/shrijan.jpg',
-      bio: 'Master of classical and folk flute (Bansuri). Shrijan adds airy, transcendent atmospheric layers that define Ekaya Hami’s signature folk-fusion sound.',
-      instruments: ['Bansuri (Flute)', 'Woodwinds'],
-    },
-    {
-      name: 'Shreena Tyataa',
-      role: 'Guitarist',
-      handle: '@shreena.guitarcore',
-      link: 'https://www.instagram.com/shreena.guitarcore/',
-      img: '/ekaya-website/images/members/shreena.jpg',
-      bio: 'Providing harmonic structure and acoustic dynamics, Shreena fuses western fingerstyle techniques with subtle Eastern modal progressions.',
-      instruments: ['Acoustic Guitar', 'Rhythm Guitar'],
-    },
-    {
-      name: 'Bishal Basi',
-      role: 'Percussionist & Madal',
-      handle: '@bishalbasii',
-      link: 'https://www.instagram.com/bishalbasii/',
-      img: '/ekaya-website/images/members/bishalbasi.jpg',
-      bio: 'Anchoring the rhythmic energy of the ensemble, Bishal drives the beat with traditional Madal patterns and intricate folk polyrhythms.',
-      instruments: ['Madal', 'Percussion'],
-    },
-    {
-      name: 'Sudeep Chawal',
-      role: 'Effects & Taa',
-      handle: '@sudeepchawall',
-      link: 'https://www.instagram.com/sudeepchawall/',
-      img: '/ekaya-website/images/members/sudeep.jpg',
-      bio: 'Merging tradition with electronic ambiance, Sudeep performs traditional Taa while engineering sonic depth and real-time audio effects for live shows.',
-      instruments: ['Taa', 'Live Sound Effects'],
-    },
-    {
-      name: 'Amulya Rajchal',
-      role: 'Percussionist',
-      handle: '@amulya_tuned',
-      link: 'https://www.instagram.com/amulya_tuned/',
-      img: '/ekaya-website/images/members/amulya.jpg',
-      bio: 'Bringing high-octane percussive dynamics and syncopated grooves, Amulya complements the rhythm section with intricate regional drumming styles.',
-      instruments: ['Percussion', 'Tuned Rhythm'],
-    },
-  ];
+  // Form State
+  const [formData, setFormData] = useState({
+    name: '',
+    contact: '',
+    eventDate: '',
+    location: '',
+    details: '',
+  });
 
-  const management: Member[] = [
-    {
-      name: 'Sujal Suwal',
-      role: 'Band Manager',
-      handle: '@sujalsuwall',
-      link: 'https://www.instagram.com/sujalsuwall/',
-      img: '/ekaya-website/images/members/sujalsuwal.jpg',
-      bio: 'Managing band logistics, tour bookings, and label communications under donob orie. Sujal coordinates all live performances and strategic operations.',
-      instruments: ['Management', 'Operations'],
-    },
-    {
-      name: 'Sujan Sujakhu',
-      role: 'Crew / Production Team',
-      handle: '@sujansujakhuu',
-      link: 'https://www.instagram.com/sujansujakhuu/',
-      img: '/ekaya-website/images/members/sujansujakhu.jpg',
-      bio: 'Overseeing stage setup, technical execution, and audio engineering ensuring seamless live performance quality for every Ekaya show.',
-      instruments: ['Stage Tech', 'Production'],
-    },
-  ];
+  // Close modals on Escape key press
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedMember(null);
+        setZoomedImage(null);
+        setIsBookingOpen(false);
+        setIsMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
-  const popularVideos = [
-    { title: 'Asan Twa - Ekaya Hami | donob sessions', id: '2HTRkmBVE6w', desc: 'A fresh folk-fusion rendition of a classic Newa tune' },
-    { title: 'Mayosa - Shreejan, Priya & Ekaya Hami', id: 'fC2TbByrlbA', desc: 'Official Music Video' },
-  ];
-
-  const recentVideos = [
-    { title: 'Hissi - Ekaya Hami | Official Music Video', id: 'OBezCp_2cEY', desc: 'Latest Single Release' },
-    { title: 'Mayosa - Official Lyrics Video', id: 'aiz_ivdBRrc', desc: 'Lyrics & Acoustic Visualizer' },
-  ];
-
-  const handleBookingSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleBookingSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setBookingStatus('Inquiry compiled for Manager Sujal Suwal. Opening mail application...');
+
+    const emailSubject = encodeURIComponent(`Ekaya Hami Performance Booking Inquiry - ${formData.name}`);
+    const emailBody = encodeURIComponent(
+      `Name / Organization: ${formData.name}\n` +
+      `Contact Info: ${formData.contact}\n` +
+      `Event Date: ${formData.eventDate}\n` +
+      `Event Location: ${formData.location}\n\n` +
+      `Event Details:\n${formData.details}`
+    );
+
     setTimeout(() => {
-      window.location.href = `mailto:donoborie@gmail.com?subject=Ekaya Hami Performance Booking Inquiry (Attn: Sujal Suwal - Manager)`;
+      window.location.href = `mailto:donoborie@gmail.com?subject=${emailSubject}&body=${emailBody}`;
+      setBookingStatus('');
+      setIsBookingOpen(false);
     }, 1200);
   };
 
@@ -134,14 +176,15 @@ export default function Home() {
       <div className="fixed bottom-1/3 -right-32 w-96 h-96 bg-amber-600/10 rounded-full blur-[140px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }} />
 
       {/* Top Navbar */}
-      <nav className="sticky top-0 z-50 bg-[#070708]/70 backdrop-blur-xl border-b border-white/10 px-6 py-4 flex items-center justify-between max-w-7xl mx-auto shadow-2xl">
+      <nav className="sticky top-0 z-40 bg-[#070708]/80 backdrop-blur-xl border-b border-white/10 px-6 py-4 max-w-7xl mx-auto shadow-2xl flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
           <div className="relative w-9 h-9 rounded-full overflow-hidden border border-amber-500/40 shadow-sm shadow-amber-500/20 group-hover:border-amber-500 transition-colors">
             <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
           </div>
           <span className="font-bold text-amber-500 tracking-wider text-lg group-hover:text-amber-400 transition-colors">EKAYA HAMI</span>
         </a>
-        
+
+        {/* Desktop Navigation Links */}
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-neutral-300">
           <a href="#about" className="hover:text-amber-500 transition-colors">About</a>
           <a href="#videos" className="hover:text-amber-500 transition-colors">Music & Videos</a>
@@ -149,15 +192,41 @@ export default function Home() {
           <a href="#booking" className="hover:text-amber-500 transition-colors">Bookings</a>
         </div>
 
+        {/* Social Icons & Mobile Menu Button */}
         <div className="flex items-center space-x-4 text-neutral-400">
-          <Link href="https://www.instagram.com/ekayahami/" target="_blank" className="hover:text-amber-500 transition-colors">
+          <Link href="https://www.instagram.com/ekayahami/" target="_blank" aria-label="Instagram" className="hover:text-amber-500 transition-colors">
             <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
           </Link>
-          <Link href="https://www.youtube.com/@donoborie" target="_blank" className="hover:text-amber-500 transition-colors">
+          <Link href="https://www.youtube.com/@donoborie" target="_blank" aria-label="YouTube" className="hover:text-amber-500 transition-colors">
             <svg className="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
           </Link>
+
+          {/* Hamburger Menu Toggle Button */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className="md:hidden text-neutral-300 hover:text-amber-500 focus:outline-none p-1"
+            aria-label="Toggle menu"
+          >
+            <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+              {isMobileMenuOpen ? (
+                <path fillRule="evenodd" clipRule="evenodd" d="M18.278 16.864a1 1 0 0 1-1.414 1.414l-4.829-4.828-4.828 4.828a1 1 0 0 1-1.414-1.414l4.828-4.829-4.828-4.828a1 1 0 0 1 1.414-1.414l4.829 4.828 4.828-4.828a1 1 0 1 1 1.414 1.414l-4.828 4.829 4.828 4.828z" />
+              ) : (
+                <path fillRule="evenodd" d="M4 5h16a1 1 0 0 1 0 2H4a1 1 0 1 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2zm0 6h16a1 1 0 0 1 0 2H4a1 1 0 0 1 0-2z" />
+              )}
+            </svg>
+          </button>
         </div>
       </nav>
+
+      {/* Mobile Drawer */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden sticky top-[73px] z-30 bg-[#070708]/95 border-b border-white/10 backdrop-blur-xl px-6 py-4 flex flex-col space-y-4 text-center font-medium">
+          <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">About</a>
+          <a href="#videos" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">Music & Videos</a>
+          <a href="#members" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">Band & Crew</a>
+          <a href="#booking" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">Bookings</a>
+        </div>
+      )}
 
       {/* Hero Header */}
       <header className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6 border-b border-white/5 overflow-hidden">
@@ -245,7 +314,7 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {(activeTab === 'popular' ? popularVideos : recentVideos).map((video) => (
+          {(activeTab === 'popular' ? POPULAR_VIDEOS : RECENT_VIDEOS).map((video) => (
             <div key={video.id} className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/40 transition-all duration-500 group">
               <div className="relative aspect-video w-full bg-neutral-950">
                 <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${video.id}`} title={video.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
@@ -255,7 +324,7 @@ export default function Home() {
                   <h3 className="font-bold text-white group-hover:text-amber-500 transition-colors text-base sm:text-lg">{video.title}</h3>
                   <p className="text-xs text-neutral-400 mt-1">{video.desc}</p>
                 </div>
-                <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noreferrer" className="shrink-0 ml-4 p-3 bg-white/[0.05] hover:bg-amber-500 hover:text-black text-neutral-300 rounded-2xl border border-white/10 transition-all" title="Open in YouTube">
+                <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noreferrer" className="shrink-0 ml-4 p-3 bg-white/[0.05] hover:bg-amber-500 hover:text-black text-neutral-300 rounded-2xl border border-white/10 transition-all" aria-label="Open video on YouTube">
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 </a>
               </div>
@@ -269,31 +338,24 @@ export default function Home() {
         <div className="text-center mb-12">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Ensemble & Performers</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">Band Members</h2>
-          <p className="text-xs text-neutral-400 mt-2">Click photo to zoom • Click <strong>View Bio</strong> to open details</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {musicians.map((member) => (
+          {MUSICIANS.map((member) => (
             <div
               key={member.name}
               className="group relative bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:shadow-2xl hover:shadow-amber-500/10"
             >
-              {/* Photo Zoom Click Handler */}
               <div 
                 onClick={() => setZoomedImage({ src: member.img, alt: member.name })}
-                className="relative w-32 h-32 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all duration-500 mb-4 shadow-xl cursor-zoom-in group/img"
-                title="Click to zoom image"
+                className="relative w-32 h-32 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all duration-500 mb-4 shadow-xl cursor-pointer"
               >
-                <Image src={member.img} alt={member.name} fill className="object-cover group-hover/img:scale-110 transition-transform duration-500 ease-out" />
-                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity text-amber-400 font-bold text-xs">
-                  🔍 Zoom
-                </div>
+                <Image src={member.img} alt={member.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
               </div>
 
               <h3 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{member.name}</h3>
               <p className="text-xs text-amber-500 font-medium mt-0.5 uppercase tracking-wider">{member.role}</p>
 
-              {/* Explicit Bio Trigger */}
               <button
                 onClick={(e) => {
                   e.stopPropagation();
@@ -314,20 +376,16 @@ export default function Home() {
             <h3 className="text-2xl font-bold text-white mt-1">Management & Crew</h3>
           </div>
           <div className="flex flex-wrap justify-center gap-6">
-            {management.map((member) => (
+            {MANAGEMENT.map((member) => (
               <div
                 key={member.name}
                 className="group relative bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 w-64 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:shadow-2xl hover:shadow-amber-500/10"
               >
                 <div 
                   onClick={() => setZoomedImage({ src: member.img, alt: member.name })}
-                  className="relative w-28 h-28 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all duration-500 mb-4 shadow-xl cursor-zoom-in group/img"
-                  title="Click to zoom image"
+                  className="relative w-28 h-28 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all duration-500 mb-4 shadow-xl cursor-pointer"
                 >
-                  <Image src={member.img} alt={member.name} fill className="object-cover group-hover/img:scale-110 transition-transform duration-500 ease-out" />
-                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity text-amber-400 font-bold text-xs">
-                    🔍 Zoom
-                  </div>
+                  <Image src={member.img} alt={member.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out" />
                 </div>
 
                 <h4 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{member.name}</h4>
@@ -352,7 +410,7 @@ export default function Home() {
       {selectedMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in" onClick={() => setSelectedMember(null)}>
           <div className="bg-[#121215]/90 border border-white/20 max-w-md w-full rounded-3xl p-6 sm:p-8 relative shadow-2xl text-center transition-all transform scale-100" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setSelectedMember(null)} className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
+            <button onClick={() => setSelectedMember(null)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
               ✕
             </button>
 
@@ -395,7 +453,7 @@ export default function Home() {
       {zoomedImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl animate-fade-in" onClick={() => setZoomedImage(null)}>
           <div className="relative max-w-3xl max-h-[85vh] w-full h-full flex items-center justify-center p-2" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setZoomedImage(null)} className="absolute top-2 right-2 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border border-white/20 transition-all z-10">
+            <button onClick={() => setZoomedImage(null)} aria-label="Close image preview" className="absolute top-2 right-2 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border border-white/20 transition-all z-10">
               ✕
             </button>
             <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
@@ -431,9 +489,9 @@ export default function Home() {
 
       {/* Booking Modal */}
       {isBookingOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-          <div className="bg-[#101012]/80 backdrop-blur-2xl border border-white/15 w-full max-w-lg rounded-3xl p-6 sm:p-8 relative shadow-2xl">
-            <button onClick={() => setIsBookingOpen(false)} className="absolute top-5 right-5 text-neutral-400 hover:text-white text-lg font-bold">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md" onClick={() => setIsBookingOpen(false)}>
+          <div className="bg-[#101012]/80 backdrop-blur-2xl border border-white/15 w-full max-w-lg rounded-3xl p-6 sm:p-8 relative shadow-2xl" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setIsBookingOpen(false)} aria-label="Close booking form" className="absolute top-5 right-5 text-neutral-400 hover:text-white text-lg font-bold">
               ✕
             </button>
             <h3 className="text-2xl font-bold text-amber-500 mb-1">Performance Inquiry</h3>
@@ -444,25 +502,58 @@ export default function Home() {
             <form onSubmit={handleBookingSubmit} className="space-y-4 text-left">
               <div>
                 <label className="block text-xs text-neutral-300 font-medium mb-1">Your Name / Organization</label>
-                <input required type="text" placeholder="Full Name or Event Org" className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" />
+                <input 
+                  required 
+                  type="text" 
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Full Name or Event Org" 
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" 
+                />
               </div>
               <div>
                 <label className="block text-xs text-neutral-300 font-medium mb-1">Email / Phone</label>
-                <input required type="text" placeholder="Contact Details" className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" />
+                <input 
+                  required 
+                  type="text" 
+                  value={formData.contact}
+                  onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                  placeholder="Contact Details" 
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" 
+                />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs text-neutral-300 font-medium mb-1">Event Date</label>
-                  <input required type="date" className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" />
+                  <input 
+                    required 
+                    type="date" 
+                    value={formData.eventDate}
+                    onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
+                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" 
+                  />
                 </div>
                 <div>
                   <label className="block text-xs text-neutral-300 font-medium mb-1">Event Location</label>
-                  <input required type="text" placeholder="City / Venue" className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" />
+                  <input 
+                    required 
+                    type="text" 
+                    value={formData.location}
+                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                    placeholder="City / Venue" 
+                    className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none" 
+                  />
                 </div>
               </div>
               <div>
                 <label className="block text-xs text-neutral-300 font-medium mb-1">Event Type & Details</label>
-                <textarea rows={3} placeholder="Festival, Concert, Wedding, Corporate, etc." className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none"></textarea>
+                <textarea 
+                  rows={3} 
+                  value={formData.details}
+                  onChange={(e) => setFormData({ ...formData, details: e.target.value })}
+                  placeholder="Festival, Concert, Wedding, Corporate, etc." 
+                  className="w-full bg-white/[0.05] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:border-amber-500 focus:outline-none"
+                />
               </div>
 
               {bookingStatus && (
