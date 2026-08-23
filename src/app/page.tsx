@@ -19,6 +19,7 @@ export default function Home() {
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [bookingStatus, setBookingStatus] = useState('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
+  const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
 
   const musicians: Member[] = [
     {
@@ -64,7 +65,7 @@ export default function Home() {
       link: 'https://www.instagram.com/bishalbasii/',
       img: '/ekaya-website/images/members/bishalbasi.jpg',
       bio: 'Anchoring the rhythmic energy of the ensemble, Bishal drives the beat with traditional Madal patterns and intricate folk polyrhythms.',
-      instruments: ['Percussion', 'Madal'],
+      instruments: ['Madal', 'Percussion'],
     },
     {
       name: 'Sudeep Chawal',
@@ -128,7 +129,7 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
       
-      {/* iOS Ambient Background Animation */}
+      {/* Background Glows */}
       <div className="fixed top-1/4 -left-32 w-96 h-96 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none animate-pulse" />
       <div className="fixed bottom-1/3 -right-32 w-96 h-96 bg-amber-600/10 rounded-full blur-[140px] pointer-events-none animate-pulse" style={{ animationDuration: '8s' }} />
 
@@ -206,7 +207,7 @@ export default function Home() {
             </p>
             
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mb-6">
-              By blending the haunting resonance of the <strong>Sarangi</strong>, airy compositions of the traditional <strong>Flute (Bansuri)</strong>, rhythmic <strong>acoustic guitars</strong>, and vibrant percussive beats like the <strong>Taa</strong> and traditional drums, Ekaya breathes fresh life into classical regional compositions.
+              By blending the haunting resonance of the <strong>Sarangi</strong>, airy compositions of the traditional <strong>Flute (Bansuri)</strong>, rhythmic <strong>acoustic guitars</strong>, and vibrant percussive beats like the <strong>Madal</strong>, <strong>Taa</strong>, and traditional drums, Ekaya breathes fresh life into classical regional compositions.
             </p>
 
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-6 border-t border-white/10">
@@ -227,7 +228,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Embedded Videos */}
+      {/* Music & Videos */}
       <section id="videos" className="py-20 px-6 max-w-6xl mx-auto border-b border-white/5">
         <div className="text-center mb-10">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Official YouTube Releases</span>
@@ -263,30 +264,45 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Interactive Band Members & Descriptions */}
+      {/* Band Members Section */}
       <section id="members" className="py-20 px-6 max-w-7xl mx-auto border-b border-white/5">
         <div className="text-center mb-12">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Ensemble & Performers</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">Band Members</h2>
-          <p className="text-xs text-neutral-400 mt-2">Click any profile card to read their full bio & role</p>
+          <p className="text-xs text-neutral-400 mt-2">Click photo to zoom • Click <strong>View Bio</strong> to open details</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {musicians.map((member) => (
             <div
               key={member.name}
-              onClick={() => setSelectedMember(member)}
-              className="group cursor-pointer relative bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:shadow-2xl hover:shadow-amber-500/10"
+              className="group relative bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:shadow-2xl hover:shadow-amber-500/10"
             >
-              <div className="relative w-32 h-32 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-colors duration-500 mb-4 shadow-xl">
-                <Image src={member.img} alt={member.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+              {/* Photo Zoom Click Handler */}
+              <div 
+                onClick={() => setZoomedImage({ src: member.img, alt: member.name })}
+                className="relative w-32 h-32 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all duration-500 mb-4 shadow-xl cursor-zoom-in group/img"
+                title="Click to zoom image"
+              >
+                <Image src={member.img} alt={member.name} fill className="object-cover group-hover/img:scale-110 transition-transform duration-500 ease-out" />
+                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity text-amber-400 font-bold text-xs">
+                  🔍 Zoom
+                </div>
               </div>
+
               <h3 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{member.name}</h3>
               <p className="text-xs text-amber-500 font-medium mt-0.5 uppercase tracking-wider">{member.role}</p>
 
-              <span className="mt-4 px-4 py-1.5 bg-white/[0.05] group-hover:bg-amber-500 group-hover:text-black rounded-full border border-white/10 text-[11px] font-semibold text-neutral-300 transition-all">
+              {/* Explicit Bio Trigger */}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedMember(member);
+                }}
+                className="mt-5 px-5 py-2 bg-white/[0.06] hover:bg-amber-500 hover:text-black rounded-2xl border border-white/10 text-xs font-semibold text-neutral-200 transition-all active:scale-95 shadow-md hover:shadow-amber-500/20"
+              >
                 View Bio →
-              </span>
+              </button>
             </div>
           ))}
         </div>
@@ -301,33 +317,49 @@ export default function Home() {
             {management.map((member) => (
               <div
                 key={member.name}
-                onClick={() => setSelectedMember(member)}
-                className="group cursor-pointer relative bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 w-64 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)]"
+                className="group relative bg-white/[0.03] hover:bg-white/[0.08] backdrop-blur-2xl border border-white/10 hover:border-amber-500/50 rounded-3xl p-6 w-64 flex flex-col items-center text-center transition-all duration-500 hover:-translate-y-2 shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:shadow-2xl hover:shadow-amber-500/10"
               >
-                <div className="relative w-28 h-28 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-colors duration-500 mb-4 shadow-xl">
-                  <Image src={member.img} alt={member.name} fill className="object-cover group-hover:scale-110 transition-transform duration-700 ease-out" />
+                <div 
+                  onClick={() => setZoomedImage({ src: member.img, alt: member.name })}
+                  className="relative w-28 h-28 rounded-full overflow-hidden border border-white/20 group-hover:border-amber-500 transition-all duration-500 mb-4 shadow-xl cursor-zoom-in group/img"
+                  title="Click to zoom image"
+                >
+                  <Image src={member.img} alt={member.name} fill className="object-cover group-hover/img:scale-110 transition-transform duration-500 ease-out" />
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover/img:opacity-100 flex items-center justify-center transition-opacity text-amber-400 font-bold text-xs">
+                    🔍 Zoom
+                  </div>
                 </div>
+
                 <h4 className="font-bold text-lg text-white group-hover:text-amber-400 transition-colors">{member.name}</h4>
                 <p className="text-xs text-amber-500 font-medium mt-0.5 uppercase tracking-wider">{member.role}</p>
 
-                <span className="mt-4 px-4 py-1.5 bg-white/[0.05] group-hover:bg-amber-500 group-hover:text-black rounded-full border border-white/10 text-[11px] font-semibold text-neutral-300 transition-all">
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setSelectedMember(member);
+                  }}
+                  className="mt-5 px-5 py-2 bg-white/[0.06] hover:bg-amber-500 hover:text-black rounded-2xl border border-white/10 text-xs font-semibold text-neutral-200 transition-all active:scale-95 shadow-md hover:shadow-amber-500/20"
+                >
                   View Profile →
-                </span>
+                </button>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Member Profile Modal */}
+      {/* Member Profile Bio Modal */}
       {selectedMember && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in">
-          <div className="bg-[#121215]/90 border border-white/20 max-w-md w-full rounded-3xl p-6 sm:p-8 relative shadow-2xl text-center">
-            <button onClick={() => setSelectedMember(null)} className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-xl animate-fade-in" onClick={() => setSelectedMember(null)}>
+          <div className="bg-[#121215]/90 border border-white/20 max-w-md w-full rounded-3xl p-6 sm:p-8 relative shadow-2xl text-center transition-all transform scale-100" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setSelectedMember(null)} className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
               ✕
             </button>
 
-            <div className="relative w-36 h-36 rounded-full mx-auto overflow-hidden border-2 border-amber-500/80 shadow-2xl mb-4">
+            <div 
+              onClick={() => setZoomedImage({ src: selectedMember.img, alt: selectedMember.name })}
+              className="relative w-32 h-32 rounded-full mx-auto overflow-hidden border-2 border-amber-500/80 shadow-2xl mb-4 cursor-pointer hover:scale-105 transition-transform"
+            >
               <Image src={selectedMember.img} alt={selectedMember.name} fill className="object-cover" />
             </div>
 
@@ -351,10 +383,24 @@ export default function Home() {
               </div>
             )}
 
-            <a href={selectedMember.link} target="_blank" rel="noreferrer" className="inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-400 text-black font-semibold px-6 py-2.5 rounded-2xl transition-all text-xs">
+            <a href={selectedMember.link} target="_blank" rel="noreferrer" className="inline-flex items-center space-x-2 bg-amber-500 hover:bg-amber-400 text-black font-semibold px-6 py-2.5 rounded-2xl transition-all text-xs shadow-lg shadow-amber-500/20">
               <span>Follow on Instagram</span>
               <span>→</span>
             </a>
+          </div>
+        </div>
+      )}
+
+      {/* Interactive Photo Zoom Modal */}
+      {zoomedImage && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-2xl animate-fade-in" onClick={() => setZoomedImage(null)}>
+          <div className="relative max-w-3xl max-h-[85vh] w-full h-full flex items-center justify-center p-2" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setZoomedImage(null)} className="absolute top-2 right-2 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border border-white/20 transition-all z-10">
+              ✕
+            </button>
+            <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20 shadow-2xl">
+              <Image src={zoomedImage.src} alt={zoomedImage.alt} fill className="object-contain" priority />
+            </div>
           </div>
         </div>
       )}
@@ -383,7 +429,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Glassmorphic Booking Form Modal */}
+      {/* Booking Modal */}
       {isBookingOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
           <div className="bg-[#101012]/80 backdrop-blur-2xl border border-white/15 w-full max-w-lg rounded-3xl p-6 sm:p-8 relative shadow-2xl">
