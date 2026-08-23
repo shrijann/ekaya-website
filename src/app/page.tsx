@@ -18,6 +18,8 @@ interface Video {
   title: string;
   id: string;
   desc: string;
+  views?: number;
+  publishedAt?: string;
 }
 
 const MUSICIANS: Member[] = [
@@ -107,18 +109,38 @@ const MANAGEMENT: Member[] = [
   },
 ];
 
-const POPULAR_VIDEOS: Video[] = [
-  { title: 'Asan Twa - Ekaya Hami | donob sessions', id: '2HTRkmBVE6w', desc: 'A fresh folk-fusion rendition of a classic Newa tune' },
-  { title: 'Mayosa - Shreejan, Priya & Ekaya Hami', id: 'fC2TbByrlbA', desc: 'Official Music Video' },
-];
-
-const RECENT_VIDEOS: Video[] = [
-  { title: 'Hissi - Ekaya Hami | Official Music Video', id: 'OBezCp_2cEY', desc: 'Latest Single Release' },
-  { title: 'Mayosa - Official Lyrics Video', id: 'aiz_ivdBRrc', desc: 'Lyrics & Acoustic Visualizer' },
+// Master Collection of Ekaya Hami Videos
+const INITIAL_VIDEOS: Video[] = [
+  {
+    title: 'Jhan Jaka Maya - Ekaya Hami | Live at Asan',
+    id: 'OzyBRsBbeNE',
+    desc: 'Live Performance from Asan, Kathmandu',
+  },
+  {
+    title: 'Ratna - Juju Kaji Ranjit with Ekaya Hami | Live at Asan',
+    id: '7dtLDBqayCY',
+    desc: 'Kathmandu Film Festival Collaboration',
+  },
+  {
+    title: 'Hissi - Ekaya Hami | Official Music Video',
+    id: 'OBezCp_2cEY',
+    desc: 'Official Music Video',
+  },
+  {
+    title: 'Asan Twa - Ekaya Hami | donob sessions',
+    id: '2HTRkmBVE6w',
+    desc: 'A fresh folk-fusion rendition of a classic Newa tune',
+  },
+  {
+    title: 'Mayosa - Shreejan, Priya & Ekaya Hami',
+    id: 'fC2TbByrlbA',
+    desc: 'Official Music Video',
+  },
 ];
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'popular' | 'recent'>('popular');
+  const [activeTab, setActiveTab] = useState<'popular' | 'recent'>('recent');
+  const [videoList, setVideoList] = useState<Video[]>(INITIAL_VIDEOS);
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [bookingStatus, setBookingStatus] = useState('');
@@ -132,6 +154,45 @@ export default function Home() {
     eventDate: '',
     location: '',
     details: '',
+  });
+
+  // Automatically fetch live metrics (Views & Dates) from YouTube Data API if API Key is available
+  useEffect(() => {
+    const apiKey = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY;
+    if (!apiKey) return;
+
+    const videoIds = INITIAL_VIDEOS.map((v) => v.id).join(',');
+    fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoIds}&key=${apiKey}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.items) {
+          const updated = INITIAL_VIDEOS.map((vid) => {
+            const fetched = data.items.find((item: any) => item.id === vid.id);
+            if (fetched) {
+              return {
+                ...vid,
+                views: parseInt(fetched.statistics.viewCount || '0', 10),
+                publishedAt: fetched.snippet.publishedAt,
+              };
+            }
+            return vid;
+          });
+          setVideoList(updated);
+        }
+      })
+      .catch((err) => console.error('YouTube Live Sync Error:', err));
+  }, []);
+
+  // Filter & Sort dynamic videos
+  const displayedVideos = [...videoList].sort((a, b) => {
+    if (activeTab === 'popular') {
+      return (b.views || 0) - (a.views || 0);
+    } else {
+      if (a.publishedAt && b.publishedAt) {
+        return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+      }
+      return 0; // standard fallback array order
+    }
   });
 
   // Close modals on Escape key press
@@ -298,7 +359,7 @@ export default function Home() {
       </section>
 
       {/* Music & Videos */}
-      <section id="videos" className="py-20 px-6 max-w-6xl mx-auto border-b border-white/5">
+      <section id="videos" className="py-20 px-6 max-w-7xl mx-auto border-b border-white/5">
         <div className="text-center mb-10">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Official YouTube Releases</span>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-1">Featured Music & Videos</h2>
@@ -313,16 +374,21 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {(activeTab === 'popular' ? POPULAR_VIDEOS : RECENT_VIDEOS).map((video) => (
-            <div key={video.id} className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/40 transition-all duration-500 group">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {displayedVideos.map((video) => (
+            <div key={video.id} className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/40 transition-all duration-500 group flex flex-col justify-between">
               <div className="relative aspect-video w-full bg-neutral-950">
                 <iframe className="w-full h-full" src={`https://www.youtube.com/embed/${video.id}`} title={video.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
               </div>
-              <div className="p-6 flex justify-between items-center">
+              <div className="p-6 flex justify-between items-center flex-1">
                 <div>
-                  <h3 className="font-bold text-white group-hover:text-amber-500 transition-colors text-base sm:text-lg">{video.title}</h3>
+                  <h3 className="font-bold text-white group-hover:text-amber-500 transition-colors text-sm sm:text-base line-clamp-2">{video.title}</h3>
                   <p className="text-xs text-neutral-400 mt-1">{video.desc}</p>
+                  {video.views !== undefined && (
+                    <span className="inline-block mt-2 text-[10px] text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                      {video.views.toLocaleString()} views
+                    </span>
+                  )}
                 </div>
                 <a href={`https://www.youtube.com/watch?v=${video.id}`} target="_blank" rel="noreferrer" className="shrink-0 ml-4 p-3 bg-white/[0.05] hover:bg-amber-500 hover:text-black text-neutral-300 rounded-2xl border border-white/10 transition-all" aria-label="Open video on YouTube">
                   <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
