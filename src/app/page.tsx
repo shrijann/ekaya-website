@@ -19,8 +19,6 @@ interface Video {
   title: string;
   id: string;
   desc: string;
-  views: number;
-  publishedAt: string;
 }
 
 const MUSICIANS: Member[] = [
@@ -110,68 +108,76 @@ const MANAGEMENT: Member[] = [
   },
 ];
 
-// Verified Master Video Database from @donoborie YouTube channel
-const VIDEOS: Video[] = [
+// Explicit Recent Releases List
+const RECENT_VIDEOS: Video[] = [
   {
-    uniqueKey: 'vid-asan-twa',
-    title: 'Ekaya Hami - Asan Twa | donob sessions',
-    id: '2HTRkmBVE6w',
-    desc: 'A fresh folk-fusion rendition of a classic Newa tune',
-    views: 2300000, // 2.3M Views -> Strict #1 Popular
-    publishedAt: '2025-04-04',
-  },
-  {
-    uniqueKey: 'vid-ratna-cover',
-    title: 'Ekaya Hami - Ratna | Cover | donob sessions',
-    id: '7dtLDBqayCY',
-    desc: 'Classic Nepal Bhasa cover by Ekaya Hami',
-    views: 340000,
-    publishedAt: '2025-02-10',
-  },
-  {
-    uniqueKey: 'vid-mayosa-mv',
-    title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Official Music Video',
-    id: 'fC2TbByrlbA',
-    desc: 'Official Music Video',
-    views: 222000,
-    publishedAt: '2024-05-10',
-  },
-  {
-    uniqueKey: 'vid-hissi-mv',
-    title: 'Hissi - Ekaya Hami | Official Music Video',
-    id: 'OBezCp_2cEY',
-    desc: 'Official Music Video',
-    views: 109000,
-    publishedAt: '2024-01-15',
-  },
-  {
-    uniqueKey: 'vid-mayosa-acoustic',
-    title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Acoustic Version',
-    id: 'hCyzUe7hb2Q',
-    desc: 'donob sessions acoustic rendition',
-    views: 27000,
-    publishedAt: '2025-08-14',
-  },
-  {
-    uniqueKey: 'vid-jhan-jaka-maya',
+    uniqueKey: 'rec-1',
     title: 'Jhan Jaka Maya - Ekaya Hami | Live at Asan',
     id: 'OzyBRsBbeNE',
-    desc: 'Live Performance from Asan, Kathmandu',
-    views: 7600,
-    publishedAt: '2026-07-29',
+    desc: 'Live performance in Asan, Kathmandu.',
   },
   {
-    uniqueKey: 'vid-ratna-asan-live',
+    uniqueKey: 'rec-2',
     title: 'Ratna - Juju Kaji Ranjit with Ekaya Hami | Live at Asan',
     id: '7dtLDBqayCY',
-    desc: 'Kathmandu Film Festival Collaboration',
-    views: 5200,
-    publishedAt: '2026-07-03',
+    desc: 'Live collaboration at Kathmandu Film Festival.',
+  },
+  {
+    uniqueKey: 'rec-3',
+    title: 'Hissi - Ekaya Hami | Official Music Video',
+    id: 'OBezCp_2cEY',
+    desc: 'Official Music Video release.',
+  },
+  {
+    uniqueKey: 'rec-4',
+    title: 'Ekaya Hami - Ratna | Cover | donob sessions',
+    id: 'KHpnE8_hHts',
+    desc: 'Folk-fusion studio cover.',
+  },
+  {
+    uniqueKey: 'rec-5',
+    title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Lyrics Video',
+    id: 'aiz_ivdBRrc',
+    desc: 'Official Lyrics Video release.',
+  },
+];
+
+// Explicit Popular Releases List
+const POPULAR_VIDEOS: Video[] = [
+  {
+    uniqueKey: 'pop-1',
+    title: 'Ekaya Hami - Asan Twa | donob sessions',
+    id: '2HTRkmBVE6w',
+    desc: 'Classic folk-fusion rendition.',
+  },
+  {
+    uniqueKey: 'pop-2',
+    title: 'Ekaya Hami - Ratna | Cover | donob sessions',
+    id: 'KHpnE8_hHts',
+    desc: 'Popular studio session performance.',
+  },
+  {
+    uniqueKey: 'pop-3',
+    title: 'Ekaya Hami - Ghatu | donob sessions',
+    id: 'XRpF6H2ZNDQ',
+    desc: 'Tribute cover of Late King Ranajit Malla’s composition.',
+  },
+  {
+    uniqueKey: 'pop-4',
+    title: 'Mayosa - Shreejan, Priya & Ekaya Hami | Official Music Video',
+    id: 'fC2TbByrlbA',
+    desc: 'Official full production music video.',
+  },
+  {
+    uniqueKey: 'pop-5',
+    title: 'Hissi - Ekaya Hami | Official Music Video',
+    id: 'OBezCp_2cEY',
+    desc: 'Official Music Video release.',
   },
 ];
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState<'popular' | 'recent'>('recent');
+  const [activeTab, setActiveTab] = useState<'recent' | 'popular'>('recent');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [bookingStatus, setBookingStatus] = useState('');
@@ -187,14 +193,7 @@ export default function Home() {
     details: '',
   });
 
-  // Precise sorting algorithm based on selected tab
-  const displayedVideos = [...VIDEOS].sort((a, b) => {
-    if (activeTab === 'popular') {
-      return b.views - a.views; // High views to low views
-    } else {
-      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(); // Newest date to oldest
-    }
-  });
+  const displayedVideos = activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
 
   // Modal Keyboard Listeners
   useEffect(() => {
@@ -370,16 +369,16 @@ export default function Home() {
           
           <div className="inline-flex p-1 bg-white/[0.05] backdrop-blur-xl border border-white/10 rounded-2xl mt-6 shadow-inner">
             <button 
-              onClick={() => setActiveTab('popular')} 
-              className={`px-6 py-2.5 text-xs font-semibold rounded-xl transition-all duration-300 ${activeTab === 'popular' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-neutral-400 hover:text-white'}`}
-            >
-              Popular Releases
-            </button>
-            <button 
               onClick={() => setActiveTab('recent')} 
               className={`px-6 py-2.5 text-xs font-semibold rounded-xl transition-all duration-300 ${activeTab === 'recent' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-neutral-400 hover:text-white'}`}
             >
               Recent Releases
+            </button>
+            <button 
+              onClick={() => setActiveTab('popular')} 
+              className={`px-6 py-2.5 text-xs font-semibold rounded-xl transition-all duration-300 ${activeTab === 'popular' ? 'bg-amber-500 text-black shadow-lg shadow-amber-500/20' : 'text-neutral-400 hover:text-white'}`}
+            >
+              Popular Releases
             </button>
           </div>
         </div>
@@ -400,9 +399,6 @@ export default function Home() {
                 <div>
                   <h3 className="font-bold text-white group-hover:text-amber-500 transition-colors text-sm sm:text-base line-clamp-2">{video.title}</h3>
                   <p className="text-xs text-neutral-400 mt-1">{video.desc}</p>
-                  <span className="inline-block mt-2 text-[10px] text-amber-500/80 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20 font-semibold">
-                    {video.views.toLocaleString()} views
-                  </span>
                 </div>
                 <a 
                   href={`https://www.youtube.com/watch?v=${video.id}`} 
