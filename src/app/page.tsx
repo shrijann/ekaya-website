@@ -109,7 +109,6 @@ const MANAGEMENT: Member[] = [
   },
 ];
 
-// Clean Recent Releases List
 const RECENT_VIDEOS: Video[] = [
   {
     uniqueKey: 'rec-1',
@@ -148,7 +147,6 @@ const RECENT_VIDEOS: Video[] = [
   },
 ];
 
-// Clean Popular Releases List
 const POPULAR_VIDEOS: Video[] = [
   {
     uniqueKey: 'pop-1',
@@ -194,6 +192,9 @@ export default function Home() {
   const [bookingStatus, setBookingStatus] = useState('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
+  
+  // Track active inline playing video ID
+  const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -206,7 +207,6 @@ export default function Home() {
 
   const displayedVideos = activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
 
-  // Modal Keyboard Listeners
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -372,7 +372,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Music & Videos Section (Fast, Ad-Free Cards) */}
+      {/* Music & Videos Section (Play Direct or Open YouTube) */}
       <section id="videos" className="py-20 px-6 max-w-7xl mx-auto border-b border-white/5">
         <div className="text-center mb-10">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Official Releases</span>
@@ -395,36 +395,78 @@ export default function Home() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {displayedVideos.map((video) => (
-            <a 
-              key={video.uniqueKey} 
-              href={video.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/50 hover:scale-[1.02] transition-all duration-300 group flex flex-col justify-between"
-            >
-              <div className="relative aspect-video w-full bg-neutral-950 overflow-hidden">
-                <img 
-                  src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`} 
-                  alt={video.title} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                  <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                    <svg className="w-5 h-5 fill-black ml-0.5" viewBox="0 0 24 24">
-                      <path d="M8 5v14l11-7z"/>
-                    </svg>
+          {displayedVideos.map((video) => {
+            const isPlaying = playingVideoKey === video.uniqueKey;
+
+            return (
+              <div 
+                key={video.uniqueKey} 
+                className="bg-white/[0.03] backdrop-blur-2xl border border-white/10 rounded-3xl overflow-hidden shadow-[0_8px_32px_0_rgba(0,0,0,0.37)] hover:border-amber-500/50 transition-all duration-300 flex flex-col justify-between"
+              >
+                {/* Video / Thumbnail Container */}
+                <div className="relative aspect-video w-full bg-neutral-950 overflow-hidden">
+                  {isPlaying ? (
+                    <iframe
+                      src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
+                      title={video.title}
+                      className="w-full h-full border-0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                    />
+                  ) : (
+                    <div 
+                      onClick={() => setPlayingVideoKey(video.uniqueKey)}
+                      className="relative w-full h-full cursor-pointer group"
+                    >
+                      <img 
+                        src={`https://img.youtube.com/vi/${video.id}/hqdefault.jpg`} 
+                        alt={video.title} 
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        loading="lazy"
+                      />
+                      <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                        <div className="w-12 h-12 rounded-full bg-amber-500 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                          <svg className="w-5 h-5 fill-black ml-0.5" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Card Info & Direct Link */}
+                <div className="p-6 flex flex-col justify-between flex-grow">
+                  <div>
+                    <h3 className="font-bold text-white text-sm sm:text-base line-clamp-2">{video.title}</h3>
+                    <p className="text-xs text-neutral-400 mt-1">{video.desc}</p>
+                  </div>
+
+                  <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                    <button
+                      onClick={() => setPlayingVideoKey(isPlaying ? null : video.uniqueKey)}
+                      className="text-xs font-semibold text-amber-400 hover:text-amber-300 transition-colors"
+                    >
+                      {isPlaying ? 'Close Player' : 'Play Here ▶'}
+                    </button>
+
+                    <a 
+                      href={video.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center space-x-1.5 text-xs text-neutral-400 hover:text-white transition-colors bg-white/[0.05] hover:bg-white/10 px-3 py-1.5 rounded-xl border border-white/10"
+                    >
+                      <span>Watch on YouTube</span>
+                      <svg className="w-3 h-3 fill-current" viewBox="0 0 24 24">
+                        <path d="M14 3h7v7h-2V6.414l-9.293 9.293-1.414-1.414L17.586 5H14V3z"/>
+                        <path d="M5 5h5V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-5h-2v5H5V5z"/>
+                      </svg>
+                    </a>
                   </div>
                 </div>
               </div>
-
-              <div className="p-6">
-                <h3 className="font-bold text-white group-hover:text-amber-400 transition-colors text-sm sm:text-base line-clamp-2">{video.title}</h3>
-                <p className="text-xs text-neutral-400 mt-1">{video.desc}</p>
-              </div>
-            </a>
-          ))}
+            );
+          })}
         </div>
       </section>
 
@@ -669,7 +711,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Footer with Correct 2024 Founding Date */}
+      {/* Footer */}
       <footer className="py-12 border-t border-white/5 text-center text-xs text-neutral-500 space-y-2">
         <p className="text-sm text-neutral-300 font-medium">For Bookings & Press: Contact Manager Sujal Suwal (@sujalsuwall)</p>
         <p>© 2024–{new Date().getFullYear()} Ekaya Hami • Managed under donob orie. All rights reserved.</p>
