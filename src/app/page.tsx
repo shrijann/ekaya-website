@@ -311,9 +311,8 @@ export default function Home() {
             </div>
           </a>
 
-          {/* Lightweight Warm Left-to-Right Shimmer Badge */}
+          {/* Smooth Warm Left-to-Right Shimmer Badge */}
           <div className="relative inline-flex items-center justify-center px-5 py-1.5 rounded-full bg-[#121215] border border-amber-500/40 overflow-hidden shadow-[0_0_15px_rgba(245,158,11,0.2)] mb-4 group cursor-pointer">
-            {/* Animated Warm Light Beam sweeping left to right */}
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-amber-500/30 to-transparent animate-shimmer-wave" />
             
             <span className="relative text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-300 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
@@ -321,7 +320,7 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Interactive Animated & Glowing Title */}
+          {/* Interactive Title */}
           <div className="relative group cursor-pointer my-2">
             <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
             <h1 className="relative text-5xl sm:text-7xl font-extrabold tracking-tight text-white group-hover:text-amber-400 group-hover:scale-105 group-hover:drop-shadow-[0_0_25px_rgba(245,158,11,0.6)] transition-all duration-300">
@@ -419,7 +418,7 @@ export default function Home() {
                 >
                   {isPlaying ? (
                     <iframe
-                      src={`https://www.youtube.com/embed/${video.id}?autoplay=1`}
+                      src={`https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`}
                       title={video.title}
                       className="w-full h-full border-0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
