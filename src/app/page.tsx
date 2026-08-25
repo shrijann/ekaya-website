@@ -352,7 +352,7 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-6">Reimagining Folk Heritage</h2>
             
             <p className="text-neutral-300 text-base sm:text-lg leading-relaxed font-light mb-5">
-              The Nepali folk-fusion ensemble <strong>Ekaya Hami</strong> (known as <strong>Ekaya</strong>) was formed in 2024. It was envisioned and created by composer and music video director <strong>Shreejan Shyama</strong> alongside filmmaker <strong>Nischal Kisee</strong> to revive ancient sounds.
+              The Nepali folk-fusion ensemble <strong>Ekaya Hami</strong> (known as <strong>Ekaya</strong>) was formed in 2024. It was envisioned and created by composer and music video director <strong>Shreejan Shyama</strong> alongside filmmaker to revive ancient sounds.
             </p>
             
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mb-6">
@@ -365,8 +365,8 @@ export default function Home() {
                 <p className="text-sm font-semibold text-amber-500 mt-0.5">2024</p>
               </div>
               <div>
-                <p className="text-xs text-neutral-500 uppercase tracking-wider">Creators</p>
-                <p className="text-sm font-semibold text-amber-500 mt-0.5">Shreejan Shyama & Nischal Kisee</p>
+                <p className="text-xs text-neutral-500 uppercase tracking-wider">Founder</p>
+                <p className="text-sm font-semibold text-amber-500 mt-0.5">Shreejan Shyama</p>
               </div>
               <div>
                 <p className="text-xs text-neutral-500 uppercase tracking-wider">Origin</p>
