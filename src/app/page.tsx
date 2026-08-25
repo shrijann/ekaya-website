@@ -189,11 +189,11 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'recent' | 'popular'>('recent');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [bookingStatus, setBookingStatus] = useState('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
 
+  // Booking Form State
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
@@ -201,6 +201,7 @@ export default function Home() {
     location: '',
     details: '',
   });
+  const [formError, setFormError] = useState('');
 
   const displayedVideos = useMemo(() => {
     return activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
@@ -224,24 +225,49 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
+  // Minimum date for calendar picker (Tomorrow)
+  const getTomorrowDate = () => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  };
+
   const handleBookingSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setBookingStatus('Inquiry compiled for Manager Sujal Suwal. Opening mail application...');
+    setFormError('');
 
-    const emailSubject = encodeURIComponent(`Ekaya Hami Performance Booking Inquiry - ${formData.name}`);
-    const emailBody = encodeURIComponent(
+    const cleanContact = formData.contact.trim();
+
+    // 1. Validate mandatory fields
+    if (!formData.name.trim() || !cleanContact || !formData.eventDate || !formData.location.trim()) {
+      setFormError('Please fill out all required fields.');
+      return;
+    }
+
+    // 2. Validate Contact Info: 10-digit number OR proper email format
+    const isPhone = /^\d{10}$/.test(cleanContact);
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanContact);
+
+    if (!isPhone && !isEmail) {
+      setFormError('Please enter a valid 10-digit mobile number or a valid email address.');
+      return;
+    }
+
+    // 3. Construct Web Gmail compose link directly to donobmail@gmail.com
+    const subject = encodeURIComponent(`Ekaya Hami Performance Booking Inquiry - ${formData.name}`);
+    const body = encodeURIComponent(
       `Name / Organization: ${formData.name}\n` +
-      `Contact Info: ${formData.contact}\n` +
+      `Contact Info: ${cleanContact}\n` +
       `Event Date: ${formData.eventDate}\n` +
       `Event Location: ${formData.location}\n\n` +
-      `Event Details:\n${formData.details}`
+      `Event Details:\n${formData.details || 'None provided'}`
     );
 
-    setTimeout(() => {
-      window.location.href = `mailto:donoborie@gmail.com?subject=${emailSubject}&body=${emailBody}`;
-      setBookingStatus('');
-      setIsBookingOpen(false);
-    }, 1200);
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=donobmail@gmail.com&su=${subject}&body=${body}`;
+
+    window.open(gmailUrl, '_blank');
+    setIsBookingOpen(false);
+    setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
   };
 
   return (
@@ -320,7 +346,7 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Interactive Title */}
+          {/* Title */}
           <div className="relative group cursor-pointer my-2">
             <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
             <h1 className="relative text-5xl sm:text-7xl font-extrabold tracking-tight text-white group-hover:text-amber-400 group-hover:scale-105 group-hover:drop-shadow-[0_0_25px_rgba(245,158,11,0.6)] transition-all duration-300">
@@ -352,7 +378,7 @@ export default function Home() {
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-6">Reimagining Folk Heritage</h2>
             
             <p className="text-neutral-300 text-base sm:text-lg leading-relaxed font-light mb-5">
-              The Nepali folk-fusion ensemble <strong>Ekaya Hami</strong> (known as <strong>Ekaya</strong>) was formed in 2024. It was envisioned and created by composer and music video director <strong>Shreejan Shyama</strong> alongside filmmaker to revive ancient sounds.
+              The Nepali folk-fusion ensemble <strong>Ekaya Hami</strong> (known as <strong>Ekaya</strong>) was formed in 2024. It was envisioned and created by composer and music video director <strong>Shreejan Shyama</strong> to revive ancient sounds.
             </p>
             
             <p className="text-neutral-400 text-sm sm:text-base leading-relaxed mb-6">
@@ -600,7 +626,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Booking Modal */}
+      {/* Booking Modal with Validations */}
       {isBookingOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsBookingOpen(false)}>
           <div className="bg-[#121215] border border-white/20 max-w-lg w-full rounded-3xl p-6 sm:p-8 relative" onClick={(e) => e.stopPropagation()}>
@@ -613,8 +639,16 @@ export default function Home() {
             <p className="text-xs text-neutral-400 mb-6">Directly routes to Manager Sujal Suwal (@sujalsuwall).</p>
 
             <form onSubmit={handleBookingSubmit} className="space-y-4">
+              {formError && (
+                <div className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs text-center font-medium">
+                  {formError}
+                </div>
+              )}
+
               <div>
-                <label className="block text-xs font-semibold text-neutral-300 mb-1">Name / Organization *</label>
+                <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                  Name / Organization <span className="text-amber-500">*</span>
+                </label>
                 <input
                   type="text"
                   required
@@ -627,30 +661,37 @@ export default function Home() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-neutral-300 mb-1">Contact Info (Phone/Email) *</label>
+                  <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                    Contact Info (Phone/Email) <span className="text-amber-500">*</span>
+                  </label>
                   <input
                     type="text"
                     required
                     value={formData.contact}
                     onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                    placeholder="e.g. +977 9800000000"
+                    placeholder="9860913953 or mail@domain.com"
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-neutral-300 mb-1">Event Date *</label>
+                  <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                    Event Date <span className="text-amber-500">*</span>
+                  </label>
                   <input
                     type="date"
                     required
+                    min={getTomorrowDate()}
                     value={formData.eventDate}
                     onChange={(e) => setFormData({ ...formData, eventDate: e.target.value })}
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 [color-scheme:dark]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-neutral-300 mb-1">Event Location / City *</label>
+                <label className="block text-xs font-semibold text-neutral-300 mb-1">
+                  Event Location / City <span className="text-amber-500">*</span>
+                </label>
                 <input
                   type="text"
                   required
@@ -668,19 +709,15 @@ export default function Home() {
                   value={formData.details}
                   onChange={(e) => setFormData({ ...formData, details: e.target.value })}
                   placeholder="Provide info about stage size, duration, expected audience..."
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 resize-none"
                 />
               </div>
-
-              {bookingStatus && (
-                <p className="text-xs text-amber-400 font-medium bg-amber-500/10 p-2.5 rounded-xl border border-amber-500/20">{bookingStatus}</p>
-              )}
 
               <button
                 type="submit"
                 className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm mt-2"
               >
-                Send Inquiry to Management
+                Send Inquiry via Gmail
               </button>
             </form>
           </div>
