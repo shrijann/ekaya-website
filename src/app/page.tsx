@@ -318,8 +318,8 @@ export default function Home() {
       `Details:\n${formData.details || 'None'}`
     );
 
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${subject}&body=${body}`;
-    window.open(gmailUrl, '_blank', 'noopener,noreferrer');
+    // Show Booking requests sent to donobmail@gmail.com
+    window.location.href = `mailto:donobmail@gmail.com?subject=${subject}&body=${body}`;
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
@@ -786,7 +786,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Animated Manager Contact Selection Modal */}
+      {/* Manager Contact Selection Modal */}
       {isManagerContactOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsManagerContactOpen(false)}>
           <div className="bg-[#121215] border border-white/20 max-w-sm w-full rounded-3xl p-6 relative text-center animate-in fade-in zoom-in-95 duration-200 shadow-[0_0_30px_rgba(245,158,11,0.15)]" onClick={(e) => e.stopPropagation()}>
@@ -805,15 +805,13 @@ export default function Home() {
 
             <div className="space-y-3">
               <a
-                href={`https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={`mailto:donob.sujal@gmail.com?subject=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
                 className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
               >
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Compose in Gmail</p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Send Email</p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
