@@ -188,6 +188,7 @@ const POPULAR_VIDEOS: Video[] = [
 export default function Home() {
   const [activeTab, setActiveTab] = useState<'recent' | 'popular'>('recent');
   const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const [isManagerContactOpen, setIsManagerContactOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
@@ -218,6 +219,7 @@ export default function Home() {
         setSelectedMember(null);
         setZoomedImage(null);
         setIsBookingOpen(false);
+        setIsManagerContactOpen(false);
         setIsMobileMenuOpen(false);
       }
     };
@@ -253,7 +255,7 @@ export default function Home() {
       return;
     }
 
-    // 3. Construct Web Gmail compose link directly to donobmail@gmail.com
+    // 3. Construct Web Gmail compose link directly to Manager Sujal
     const subject = encodeURIComponent(`Ekaya Hami Performance Booking Inquiry - ${formData.name}`);
     const body = encodeURIComponent(
       `Name / Organization: ${formData.name}\n` +
@@ -263,7 +265,7 @@ export default function Home() {
       `Event Details:\n${formData.details || 'None provided'}`
     );
 
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=donobmail@gmail.com&su=${subject}&body=${body}`;
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${subject}&body=${body}`;
 
     window.open(gmailUrl, '_blank');
     setIsBookingOpen(false);
@@ -572,7 +574,7 @@ export default function Home() {
       {/* Member Bio Modal */}
       {selectedMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setSelectedMember(null)}>
-          <div className="bg-[#121215] border border-white/20 max-w-md w-full rounded-3xl p-6 sm:p-8 relative text-center" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[#121215] border border-white/20 max-w-md w-full rounded-3xl p-6 sm:p-8 relative text-center animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setSelectedMember(null)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
               ✕
             </button>
@@ -615,7 +617,7 @@ export default function Home() {
       {/* Image Zoom Modal */}
       {zoomedImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setZoomedImage(null)}>
-          <div className="relative max-w-3xl max-h-[85vh] w-full h-full flex items-center justify-center p-2" onClick={(e) => e.stopPropagation()}>
+          <div className="relative max-w-3xl max-h-[85vh] w-full h-full flex items-center justify-center p-2 animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setZoomedImage(null)} aria-label="Close image preview" className="absolute top-2 right-2 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border border-white/20 z-10">
               ✕
             </button>
@@ -629,7 +631,7 @@ export default function Home() {
       {/* Booking Modal with Validations */}
       {isBookingOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsBookingOpen(false)}>
-          <div className="bg-[#121215] border border-white/20 max-w-lg w-full rounded-3xl p-6 sm:p-8 relative" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-[#121215] border border-white/20 max-w-lg w-full rounded-3xl p-6 sm:p-8 relative animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
             <button onClick={() => setIsBookingOpen(false)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
               ✕
             </button>
@@ -654,7 +656,7 @@ export default function Home() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g. Nepal Music Festival"
+                  placeholder="e.g. Acme Events / Sujal"
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
@@ -697,7 +699,7 @@ export default function Home() {
                   required
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="e.g. Bhaktapur Durbar Square / Kathmandu"
+                  placeholder="e.g. Kathmandu"
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
                 />
               </div>
@@ -708,7 +710,7 @@ export default function Home() {
                   rows={3}
                   value={formData.details}
                   onChange={(e) => setFormData({ ...formData, details: e.target.value })}
-                  placeholder="Provide info about stage size, duration, expected audience..."
+                  placeholder="Describe event type, venue size, acoustic setup..."
                   className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500 resize-none"
                 />
               </div>
@@ -720,6 +722,60 @@ export default function Home() {
                 Send Inquiry via Gmail
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Animated Manager Contact Selection Modal */}
+      {isManagerContactOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsManagerContactOpen(false)}>
+          <div className="bg-[#121215] border border-white/20 max-w-sm w-full rounded-3xl p-6 relative text-center animate-in fade-in zoom-in-95 duration-200 shadow-[0_0_30px_rgba(245,158,11,0.15)]" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => setIsManagerContactOpen(false)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
+              ✕
+            </button>
+
+            <div className="w-12 h-12 bg-amber-500/10 border border-amber-500/30 rounded-2xl flex items-center justify-center mx-auto mb-3 text-amber-500">
+              <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24">
+                <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+              </svg>
+            </div>
+
+            <h3 className="text-xl font-bold text-white mb-1">Contact Manager</h3>
+            <p className="text-xs text-neutral-400 mb-6">Choose how you'd like to reach Sujal Suwal</p>
+
+            <div className="space-y-3">
+              {/* Option 1: Gmail Direct */}
+              <a
+                href={`https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
+                target="_blank"
+                rel="noreferrer"
+                className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="text-lg">✉️</span>
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Contact via Gmail</p>
+                    <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
+                  </div>
+                </div>
+                <span className="text-xs font-semibold group-hover:translate-x-1 transition-transform">→</span>
+              </a>
+
+              {/* Option 2: Direct Phone Call with Nepal Country Code */}
+              <a
+                href="tel:+9779765834572"
+                className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="text-lg">📞</span>
+                  <div className="text-left">
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Call Direct (Nepal)</p>
+                    <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">+977 9765834572</p>
+                  </div>
+                </div>
+                <span className="text-xs font-semibold group-hover:translate-x-1 transition-transform">→</span>
+              </a>
+            </div>
           </div>
         </div>
       )}
@@ -741,16 +797,16 @@ export default function Home() {
               Submit Booking Request Form
             </button>
             
-            <a href="https://www.instagram.com/sujalsuwall/" target="_blank" rel="noreferrer" className="bg-white/10 hover:bg-white/20 border border-white/15 text-white font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
-              Contact Manager on Instagram
-            </a>
+            <button onClick={() => setIsManagerContactOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-white font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
+              Contact Manager
+            </button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
       <footer className="py-12 border-t border-white/5 text-center text-xs text-neutral-500 space-y-2">
-        <p className="text-sm text-neutral-300 font-medium">For Bookings & Press: Contact Manager Sujal Suwal (@sujalsuwall)</p>
+        <p className="text-sm text-neutral-300 font-medium">For Bookings & Press: Contact Manager Sujal Suwal (+977 9765834572)</p>
         <p>© 2024–{new Date().getFullYear()} Ekaya Hami • Managed under donob orie. All rights reserved.</p>
       </footer>
     </div>
