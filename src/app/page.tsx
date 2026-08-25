@@ -318,8 +318,8 @@ export default function Home() {
       `Details:\n${formData.details || 'None'}`
     );
 
-    const mailtoUrl = `mailto:donob.sujal@gmail.com?subject=${subject}&body=${body}`;
-    window.location.href = mailtoUrl;
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${subject}&body=${body}`;
+    window.open(gmailUrl, '_blank', 'noopener,noreferrer');
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
@@ -688,8 +688,7 @@ export default function Home() {
             </button>
 
             <span className="text-amber-500 text-xs font-bold uppercase tracking-widest block mb-1">Live Performance Inquiry</span>
-            <h3 className="text-2xl font-bold text-white mb-2">Book Ekaya Hami</h3>
-            <p className="text-xs text-neutral-400 mb-6">Directly routes to Manager Sujal Suwal (@sujalsuwall).</p>
+            <h3 className="text-2xl font-bold text-white mb-6">Book Ekaya Hami</h3>
 
             <form onSubmit={handleBookingSubmit} className="space-y-4">
               {formError && (
@@ -722,7 +721,7 @@ export default function Home() {
                     required
                     value={formData.contact}
                     onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
-                    placeholder="9860913953 or mail@domain.com"
+                    placeholder="98XXXXXXXX or mail@gmail.com"
                     className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
                   />
                 </div>
@@ -806,13 +805,15 @@ export default function Home() {
 
             <div className="space-y-3">
               <a
-                href={`mailto:donob.sujal@gmail.com?subject=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
+                href={`https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
               >
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Compose Email</p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Compose in Gmail</p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
@@ -820,14 +821,14 @@ export default function Home() {
               </a>
 
               <a
-                href="tel:+9779765834572"
+                href="tel:+9779800000000"
                 className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
               >
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">📞</span>
                   <div className="text-left">
                     <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Call Direct (Nepal)</p>
-                    <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">+977 9765834572</p>
+                    <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">+977 98XXXXXXXX</p>
                   </div>
                 </div>
                 <span className="text-xs font-semibold group-hover:translate-x-1 transition-transform">→</span>
@@ -863,7 +864,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className="py-12 border-t border-white/5 text-center text-xs text-neutral-500 space-y-2">
-        <p className="text-sm text-neutral-300 font-medium">For Bookings & Press: Contact Manager Sujal Suwal (+977 9765834572)</p>
+        <p className="text-sm text-neutral-300 font-medium">For Bookings & Press: Contact Manager Sujal Suwal</p>
         <p>© 2024–{new Date().getFullYear()} Ekaya Hami • Managed under donob orie. All rights reserved.</p>
       </footer>
     </div>
