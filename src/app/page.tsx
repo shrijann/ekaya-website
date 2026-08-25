@@ -22,6 +22,63 @@ interface Video {
   url: string;
 }
 
+// Complete List of Nepal Provinces, Major Cities & All 77 Districts
+const NEPAL_LOCATIONS = [
+  {
+    province: 'Koshi Province',
+    locations: [
+      'Biratnagar (City)', 'Dharan (City)', 'Itahari (City)', 'Bhojpur', 'Dhankuta', 
+      'Ilam', 'Jhapa', 'Khotang', 'Morang', 'Okhaldhunga', 'Panchthar', 
+      'Sankhuwasabha', 'Solukhumbu', 'Sunsari', 'Taplejung', 'Udayapur'
+    ],
+  },
+  {
+    province: 'Madhesh Province',
+    locations: [
+      'Janakpur (City)', 'Birgunj (City)', 'Bara', 'Dhanusha', 'Mahottari', 
+      'Parsa', 'Rautahat', 'Saptari', 'Sarlahi', 'Siraha'
+    ],
+  },
+  {
+    province: 'Bagmati Province',
+    locations: [
+      'Kathmandu (Capital City)', 'Bhaktapur (City)', 'Lalitpur / Patan (City)', 'Hetauda (City)',
+      'Dhading', 'Dolakha', 'Kavrepalanchok', 'Makwanpur', 'Nuwakot', 
+      'Ramechhap', 'Rasuwa', 'Sindhuli', 'Sindhupalchok'
+    ],
+  },
+  {
+    province: 'Gandaki Province',
+    locations: [
+      'Pokhara (City)', 'Baglung', 'Gorkha', 'Kaski', 'Lamjung', 
+      'Manang', 'Mustang', 'Myagdi', 'Nawalpur (Nawalparasi East)', 'Parbat', 
+      'Syangja', 'Tanahu'
+    ],
+  },
+  {
+    province: 'Lumbini Province',
+    locations: [
+      'Butwal (City)', 'Bhairahawa / Siddharthanagar (City)', 'Nepalgunj (City)',
+      'Arghakhanchi', 'Banke', 'Bardiya', 'Dang', 'Gulmi', 'Kapilvastu', 
+      'Palpa', 'Pyuthan', 'Rolpa', 'Rukum East', 'Rupandehi', 'Parasi (Nawalparasi West)'
+    ],
+  },
+  {
+    province: 'Karnali Province',
+    locations: [
+      'Surkhet / Birendranagar (City)', 'Dailekh', 'Dolpa', 'Humla', 'Jajarkot', 
+      'Jumla', 'Kalikot', 'Mugu', 'Rukum West', 'Salyan'
+    ],
+  },
+  {
+    province: 'Sudurpashchim Province',
+    locations: [
+      'Dhangadhi (City)', 'Mahendranagar / Bhimdatta (City)', 'Achham', 'Baitadi', 
+      'Bajhang', 'Bajura', 'Dadeldhura', 'Darchula', 'Doti', 'Kailali', 'Kanchanpur'
+    ],
+  },
+];
+
 const MUSICIANS: Member[] = [
   {
     name: 'Shreejan Shyama',
@@ -239,7 +296,7 @@ export default function Home() {
 
     const cleanContact = formData.contact.trim();
 
-    if (!formData.name.trim() || !cleanContact || !formData.eventDate || !formData.location.trim()) {
+    if (!formData.name.trim() || !cleanContact || !formData.eventDate || !formData.location) {
       setFormError('Please fill out all required fields.');
       return;
     }
@@ -252,7 +309,6 @@ export default function Home() {
       return;
     }
 
-    // Direct mailto link: Opens native mail/gmail app with automatically filled fields
     const subject = encodeURIComponent(`Booking Inquiry: ${formData.name}`);
     const body = encodeURIComponent(
       `Name/Org: ${formData.name}\n` +
@@ -623,7 +679,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Booking Modal */}
+      {/* Booking Modal with Nepal Locations Dropdown */}
       {isBookingOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsBookingOpen(false)}>
           <div className="bg-[#121215] border border-white/20 max-w-lg w-full rounded-3xl p-6 sm:p-8 relative animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
@@ -685,18 +741,29 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* Event Location Dropdown (All 77 Districts & Major Cities of Nepal) */}
               <div>
                 <label className="block text-xs font-semibold text-neutral-300 mb-1">
-                  Event Location / City <span className="text-amber-500">*</span>
+                  Event Location / District (Nepal) <span className="text-amber-500">*</span>
                 </label>
-                <input
-                  type="text"
+                <select
                   required
                   value={formData.location}
                   onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  placeholder="e.g. Kathmandu"
-                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
-                />
+                  className="w-full bg-[#18181c] border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-amber-500"
+                >
+                  <option value="" disabled>Select a District or Major City</option>
+                  <option value="International / Outside Nepal">International / Outside Nepal</option>
+                  {NEPAL_LOCATIONS.map((group) => (
+                    <optgroup key={group.province} label={`--- ${group.province} ---`}>
+                      {group.locations.map((loc) => (
+                        <option key={loc} value={`${loc} (${group.province})`}>
+                          {loc}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
               </div>
 
               <div>
@@ -739,7 +806,7 @@ export default function Home() {
             <p className="text-xs text-neutral-400 mb-6">Choose how you'd like to reach Sujal Suwal</p>
 
             <div className="space-y-3">
-              {/* Option 1: Direct Native App / Gmail Mailto trigger with prefilled address and subject */}
+              {/* Option 1: Native Gmail/Mail App Redirect with pre-filled Sujal Gmail */}
               <a
                 href={`mailto:donob.sujal@gmail.com?subject=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
                 className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
@@ -754,7 +821,7 @@ export default function Home() {
                 <span className="text-xs font-semibold group-hover:translate-x-1 transition-transform">→</span>
               </a>
 
-              {/* Option 2: Direct Phone Call with Nepal Country Code */}
+              {/* Option 2: Direct Call with Nepal Country Code */}
               <a
                 href="tel:+9779765834572"
                 className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
