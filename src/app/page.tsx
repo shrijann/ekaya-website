@@ -227,7 +227,6 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  // Minimum date for calendar picker (Tomorrow)
   const getTomorrowDate = () => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -240,13 +239,11 @@ export default function Home() {
 
     const cleanContact = formData.contact.trim();
 
-    // 1. Validate mandatory fields
     if (!formData.name.trim() || !cleanContact || !formData.eventDate || !formData.location.trim()) {
       setFormError('Please fill out all required fields.');
       return;
     }
 
-    // 2. Validate Contact Info: 10-digit number OR proper email format
     const isPhone = /^\d{10}$/.test(cleanContact);
     const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanContact);
 
@@ -255,19 +252,19 @@ export default function Home() {
       return;
     }
 
-    // 3. Construct Web Gmail compose link directly to Manager Sujal
-    const subject = encodeURIComponent(`Ekaya Hami Performance Booking Inquiry - ${formData.name}`);
+    // Direct mailto link: Opens native mail/gmail app with automatically filled fields
+    const subject = encodeURIComponent(`Booking Inquiry: ${formData.name}`);
     const body = encodeURIComponent(
-      `Name / Organization: ${formData.name}\n` +
-      `Contact Info: ${cleanContact}\n` +
-      `Event Date: ${formData.eventDate}\n` +
-      `Event Location: ${formData.location}\n\n` +
-      `Event Details:\n${formData.details || 'None provided'}`
+      `Name/Org: ${formData.name}\n` +
+      `Contact: ${cleanContact}\n` +
+      `Date: ${formData.eventDate}\n` +
+      `Location: ${formData.location}\n\n` +
+      `Details:\n${formData.details || 'None'}`
     );
 
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${subject}&body=${body}`;
+    const mailtoUrl = `mailto:donob.sujal@gmail.com?subject=${subject}&body=${body}`;
+    window.location.href = mailtoUrl;
 
-    window.open(gmailUrl, '_blank');
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
   };
@@ -339,7 +336,6 @@ export default function Home() {
             </div>
           </a>
 
-          {/* Smooth Warm Left-to-Right Shimmer Badge */}
           <div className="relative inline-flex items-center justify-center px-5 py-1.5 rounded-full bg-[#121215] border border-amber-500/40 overflow-hidden shadow-[0_0_15px_rgba(245,158,11,0.2)] mb-4 group cursor-pointer">
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-amber-500/30 to-transparent animate-shimmer-wave" />
             
@@ -348,7 +344,6 @@ export default function Home() {
             </span>
           </div>
 
-          {/* Title */}
           <div className="relative group cursor-pointer my-2">
             <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
             <h1 className="relative text-5xl sm:text-7xl font-extrabold tracking-tight text-white group-hover:text-amber-400 group-hover:scale-105 group-hover:drop-shadow-[0_0_25px_rgba(245,158,11,0.6)] transition-all duration-300">
@@ -628,7 +623,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Booking Modal with Validations */}
+      {/* Booking Modal */}
       {isBookingOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsBookingOpen(false)}>
           <div className="bg-[#121215] border border-white/20 max-w-lg w-full rounded-3xl p-6 sm:p-8 relative animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
@@ -719,7 +714,7 @@ export default function Home() {
                 type="submit"
                 className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm mt-2"
               >
-                Send Inquiry via Gmail
+                Open Gmail & Compose
               </button>
             </form>
           </div>
@@ -744,17 +739,15 @@ export default function Home() {
             <p className="text-xs text-neutral-400 mb-6">Choose how you'd like to reach Sujal Suwal</p>
 
             <div className="space-y-3">
-              {/* Option 1: Gmail Direct */}
+              {/* Option 1: Direct Native App / Gmail Mailto trigger with prefilled address and subject */}
               <a
-                href={`https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
-                target="_blank"
-                rel="noreferrer"
+                href={`mailto:donob.sujal@gmail.com?subject=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
                 className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
               >
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Contact via Gmail</p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Compose Email</p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
