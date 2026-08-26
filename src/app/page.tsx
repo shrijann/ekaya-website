@@ -288,19 +288,37 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   }, []);
 
-  // Dispatch cleanly on both PC (Gmail Web Compose) and Mobile Devices (Mobile Mail Compose)
+  // Handles compose redirect: Native Gmail App -> Mobile Mailto Fallback -> Desktop Web Gmail
   const dispatchToGmailWeb = useCallback((email: string, subject?: string, body?: string) => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     if (isMobile) {
-      let mailtoUrl = `mailto:${encodeURIComponent(email)}`;
-      const params: string[] = [];
-      if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
-      if (body) params.push(`body=${encodeURIComponent(body)}`);
-      if (params.length > 0) mailtoUrl += `?${params.join('&')}`;
+      const encodedEmail = encodeURIComponent(email);
+      const encodedSubject = subject ? encodeURIComponent(subject) : '';
+      const encodedBody = body ? encodeURIComponent(body) : '';
+
+      // 1. Target the native Gmail app directly
+      const gmailAppUrl = `googlegmail:///co?to=${encodedEmail}&subject=${encodedSubject}&body=${encodedBody}`;
       
-      window.location.href = mailtoUrl;
+      // 2. Prepare standard mailto link fallback
+      let mailtoUrl = `mailto:${encodedEmail}`;
+      const params: string[] = [];
+      if (subject) params.push(`subject=${encodedSubject}`);
+      if (body) params.push(`body=${encodedBody}`);
+      if (params.length > 0) mailtoUrl += `?${params.join('&')}`;
+
+      // Launch Gmail App; trigger mailto if Gmail App is not installed
+      const start = Date.now();
+      window.location.href = gmailAppUrl;
+
+      setTimeout(() => {
+        if (Date.now() - start < 1500) {
+          window.location.href = mailtoUrl;
+        }
+      }, 500);
+
     } else {
+      // Desktop / PC Browser fallback
       let targetUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
       if (subject) targetUrl += `&su=${encodeURIComponent(subject)}`;
       if (body) targetUrl += `&body=${encodeURIComponent(body)}`;
