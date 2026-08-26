@@ -288,14 +288,20 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
-  // Direct Gmail Navigation Function
-  const openDirectGmail = (email: string, subject: string, body: string) => {
+  // Cross-device email dispatch (Desktop -> Gmail web compose, Mobile -> Native mailto protocol)
+  const handleEmailDispatch = (email: string, subject: string, body: string) => {
     const encodedEmail = encodeURIComponent(email);
     const encodedSubject = encodeURIComponent(subject);
     const encodedBody = encodeURIComponent(body);
 
-    const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
-    window.open(gmailWebUrl, '_blank', 'noopener,noreferrer');
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      window.location.href = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
+    } else {
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
+      window.open(gmailUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   // Booking Form Submission Handler
@@ -327,19 +333,19 @@ export default function Home() {
       `Location: ${formData.location}\n\n` +
       `Details:\n${formData.details || 'None'}`;
 
-    openDirectGmail(targetEmail, rawSubject, rawBody);
+    handleEmailDispatch(targetEmail, rawSubject, rawBody);
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
   };
 
-  // Direct Contact Manager Gmail Handler
+  // Contact Manager Handler
   const handleContactManagerGmail = () => {
     const targetEmail = 'donob.sujal@gmail.com';
     const rawSubject = 'Inquiry for Ekaya Hami Management';
     const rawBody = 'Hello Ekaya Hami Management,\n\nI would like to inquire regarding...';
 
-    openDirectGmail(targetEmail, rawSubject, rawBody);
+    handleEmailDispatch(targetEmail, rawSubject, rawBody);
     setIsManagerContactOpen(false);
   };
 
@@ -446,7 +452,7 @@ export default function Home() {
         <div className="bg-[#121215] border border-white/10 rounded-3xl p-8 sm:p-12 relative overflow-hidden">
           <div className="max-w-3xl relative z-10">
             <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">About The Ensemble</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white mt-2 mb-6">Reimagining Folk Heritage</h2>
+            <h2 className="text-3xl sm:text-4xl font-extrabold text-[#fff] mt-2 mb-6">Reimagining Folk Heritage</h2>
             
             <p className="text-neutral-300 text-base sm:text-lg leading-relaxed font-light mb-5">
               The Nepali folk-fusion ensemble <strong>Ekaya Hami</strong> (known as <strong>Ekaya</strong>) was formed in 2024. It was envisioned and created by composer and music video director <strong>Shreejan Shyama</strong> to revive ancient sounds.
@@ -801,7 +807,7 @@ export default function Home() {
                 type="submit"
                 className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm mt-2"
               >
-                Compose in Gmail
+                Proceed to Email Draft
               </button>
             </form>
           </div>
@@ -834,7 +840,7 @@ export default function Home() {
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Compose in Gmail</p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Proceed to Email Draft</p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
@@ -886,7 +892,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="py-12 border-t border-white/5 text-center text-xs text-neutral-500 space-y-2">
         <p className="text-sm text-neutral-300 font-medium">For Bookings & Press: Contact Manager Sujal Suwal</p>
-        <p>© 2024–{new Date().getFullYear()} Ekaya Hami • Managed under donob orie. All rights reserved.</p>
+        <p>© 2024–2026 Ekaya Hami • Managed under donob orie. All rights reserved.</p>
       </footer>
     </div>
   );
