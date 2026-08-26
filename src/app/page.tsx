@@ -249,6 +249,7 @@ export default function Home() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -262,6 +263,11 @@ export default function Home() {
   const displayedVideos = useMemo(() => {
     return activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
   }, [activeTab]);
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 4000);
+  };
 
   const handleTabChange = (tab: 'recent' | 'popular') => {
     setPlayingVideoKey(null);
@@ -288,17 +294,34 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
-  // Cross-device email dispatch (Desktop -> Gmail web compose, Mobile -> Native mailto protocol)
+  // Fixed Email Dispatcher with Instagram In-App Browser Fallback
   const handleEmailDispatch = (email: string, subject: string, body: string) => {
     const encodedEmail = encodeURIComponent(email);
     const encodedSubject = encodeURIComponent(subject);
     const encodedBody = encodeURIComponent(body);
 
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    const ua = navigator.userAgent || navigator.vendor;
+    
+    // Detect Instagram, Facebook, and WebKit in-app browsers
+    const isInAppBrowser = /Instagram|FBAN|FBAV|Line|Twitter/i.test(ua);
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
+
+    if (isInAppBrowser) {
+      // In-app browsers block app switching; copy payload to clipboard & notify user
+      const fullTextPayload = `To: ${email}\nSubject: ${subject}\n\n${body}`;
+      navigator.clipboard.writeText(fullTextPayload).then(() => {
+        showToast('📋 Details copied to clipboard! Paste into your mail app.');
+      }).catch(() => {
+        window.location.href = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
+      });
+      return;
+    }
 
     if (isMobile) {
+      // Standard Mobile Browsers (Safari / Chrome)
       window.location.href = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
     } else {
+      // Desktop Browsers: Direct Web Gmail Compose
       const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
       window.open(gmailUrl, '_blank', 'noopener,noreferrer');
     }
@@ -352,6 +375,13 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
       
+      {/* Dynamic Toast Notification Banner */}
+      {toastMessage && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] bg-amber-500 text-black px-6 py-3 rounded-2xl font-bold text-xs shadow-2xl animate-bounce border border-white/20 text-center max-w-[90vw]">
+          {toastMessage}
+        </div>
+      )}
+
       {/* Navbar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
@@ -807,7 +837,7 @@ export default function Home() {
                 type="submit"
                 className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm mt-2"
               >
-                Proceed to Email 
+                Proceed to Email Draft
               </button>
             </form>
           </div>
@@ -840,7 +870,7 @@ export default function Home() {
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Proceed to Email </p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Proceed to Email Draft</p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
