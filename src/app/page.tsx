@@ -288,12 +288,25 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   }, []);
 
-  // Direct composition link to Web Gmail bypassing OS handlers and Workspace redirects
+  // Dispatch cleanly on both PC (Gmail Web Compose) and Mobile Devices (Mobile Mail Compose)
   const dispatchToGmailWeb = useCallback((email: string, subject?: string, body?: string) => {
-    let targetUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
-    if (subject) targetUrl += `&su=${encodeURIComponent(subject)}`;
-    if (body) targetUrl += `&body=${encodeURIComponent(body)}`;
-    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      let mailtoUrl = `mailto:${encodeURIComponent(email)}`;
+      const params: string[] = [];
+      if (subject) params.push(`subject=${encodeURIComponent(subject)}`);
+      if (body) params.push(`body=${encodeURIComponent(body)}`);
+      if (params.length > 0) mailtoUrl += `?${params.join('&')}`;
+      
+      window.location.href = mailtoUrl;
+    } else {
+      let targetUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
+      if (subject) targetUrl += `&su=${encodeURIComponent(subject)}`;
+      if (body) targetUrl += `&body=${encodeURIComponent(body)}`;
+      
+      window.open(targetUrl, '_blank', 'noopener,noreferrer');
+    }
   }, []);
 
   const handleBookingSubmit = (e: FormEvent<HTMLFormElement>) => {
