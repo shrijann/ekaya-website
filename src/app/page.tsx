@@ -288,15 +288,20 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
-  // Direct Gmail Web Dispatcher for all platforms (Android, iPhone & Desktop)
+  // Cross-device email dispatch (Desktop -> Gmail web compose, Mobile -> Native mailto protocol)
   const handleEmailDispatch = (email: string, subject: string, body: string) => {
     const encodedEmail = encodeURIComponent(email);
     const encodedSubject = encodeURIComponent(subject);
     const encodedBody = encodeURIComponent(body);
 
-    const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
-    
-    window.open(gmailWebUrl, '_blank', 'noopener,noreferrer');
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
+    if (isMobile) {
+      window.location.href = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
+    } else {
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
+      window.open(gmailUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   // Booking Form Submission Handler
@@ -346,7 +351,7 @@ export default function Home() {
 
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
-
+      
       {/* Navbar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
@@ -802,7 +807,7 @@ export default function Home() {
                 type="submit"
                 className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm mt-2"
               >
-                Proceed to Email
+                Proceed to Email 
               </button>
             </form>
           </div>
@@ -835,7 +840,7 @@ export default function Home() {
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Proceed to Email</p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Proceed to Email </p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
