@@ -288,24 +288,17 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
-  // Direct Gmail Redirection Function
-  const handleEmailAction = (email: string, subject: string, body: string) => {
+  // Direct Gmail Navigation Function
+  const openDirectGmail = (email: string, subject: string, body: string) => {
     const encodedEmail = encodeURIComponent(email);
     const encodedSubject = encodeURIComponent(subject);
     const encodedBody = encodeURIComponent(body);
 
     const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
-
-    const isWebView = /FBAN|FBAV|Instagram|TikTok/i.test(navigator.userAgent);
-
-    if (isWebView) {
-      window.location.href = gmailWebUrl;
-    } else {
-      window.open(gmailWebUrl, '_blank', 'noopener,noreferrer');
-    }
+    window.open(gmailWebUrl, '_blank', 'noopener,noreferrer');
   };
 
-  // Booking Inquiry Handler
+  // Booking Form Submission Handler
   const handleBookingSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError('');
@@ -334,19 +327,19 @@ export default function Home() {
       `Location: ${formData.location}\n\n` +
       `Details:\n${formData.details || 'None'}`;
 
-    handleEmailAction(targetEmail, rawSubject, rawBody);
+    openDirectGmail(targetEmail, rawSubject, rawBody);
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
   };
 
-  // Manager Contact Handler
+  // Direct Contact Manager Gmail Handler
   const handleContactManagerGmail = () => {
     const targetEmail = 'donob.sujal@gmail.com';
     const rawSubject = 'Inquiry for Ekaya Hami Management';
     const rawBody = 'Hello Ekaya Hami Management,\n\nI would like to inquire regarding...';
 
-    handleEmailAction(targetEmail, rawSubject, rawBody);
+    openDirectGmail(targetEmail, rawSubject, rawBody);
     setIsManagerContactOpen(false);
   };
 
