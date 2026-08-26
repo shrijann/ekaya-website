@@ -22,7 +22,6 @@ interface Video {
   url: string;
 }
 
-// Complete List of Nepal Provinces, Major Cities & All 77 Districts
 const NEPAL_LOCATIONS = [
   {
     province: 'Koshi Province',
@@ -251,10 +250,6 @@ export default function Home() {
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
 
-  // Notification Toast State
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-  // Booking Form State
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
@@ -271,13 +266,6 @@ export default function Home() {
   const handleTabChange = (tab: 'recent' | 'popular') => {
     setPlayingVideoKey(null);
     setActiveTab(tab);
-  };
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => {
-      setToastMessage(null);
-    }, 4500);
   };
 
   useEffect(() => {
@@ -300,38 +288,20 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
-  // Improved Email Trigger for In-App Browsers (Instagram/Facebook/TikTok)
-  const handleEmailAction = async (email: string, subject: string, body: string) => {
+  // Direct Gmail Redirection Function
+  const handleEmailAction = (email: string, subject: string, body: string) => {
+    const encodedEmail = encodeURIComponent(email);
     const encodedSubject = encodeURIComponent(subject);
     const encodedBody = encodeURIComponent(body);
-    const mailtoUrl = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
 
-    // 1. Force attempt to launch the device's native mail app
-    const win = window.open(mailtoUrl, '_self');
-    if (!win) {
-      window.location.href = mailtoUrl;
-    }
+    const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
 
-    // 2. Silent copy-paste fallback for trapped WebViews
-    const clipboardText = `To: ${email}\nSubject: ${subject}\n\n${body}`;
-    try {
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(clipboardText);
-      } else {
-        const textarea = document.createElement('textarea');
-        textarea.value = clipboardText;
-        textarea.style.position = 'fixed';
-        textarea.style.left = '-9999px';
-        textarea.style.top = '-9999px';
-        document.body.appendChild(textarea);
-        textarea.focus();
-        textarea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textarea);
-      }
-      showToast("Opening Mail app... (Text copied to clipboard as backup)");
-    } catch {
-      showToast("Opening Mail app...");
+    const isWebView = /FBAN|FBAV|Instagram|TikTok/i.test(navigator.userAgent);
+
+    if (isWebView) {
+      window.location.href = gmailWebUrl;
+    } else {
+      window.open(gmailWebUrl, '_blank', 'noopener,noreferrer');
     }
   };
 
@@ -383,14 +353,6 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
       
-      {/* Toast Notification Banner */}
-      {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 max-w-sm bg-amber-500 text-black font-semibold text-xs px-5 py-3.5 rounded-2xl shadow-2xl border border-amber-400 flex items-center space-x-3 animate-in fade-in slide-in-from-bottom-5 duration-300">
-          <span>📬</span>
-          <span>{toastMessage}</span>
-        </div>
-      )}
-
       {/* Navbar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
@@ -458,7 +420,6 @@ export default function Home() {
 
           <div className="relative inline-flex items-center justify-center px-5 py-1.5 rounded-full bg-[#121215] border border-amber-500/40 overflow-hidden shadow-[0_0_15px_rgba(245,158,11,0.2)] mb-4 group cursor-pointer">
             <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-amber-500/30 to-transparent animate-shimmer-wave" />
-            
             <span className="relative text-[11px] font-semibold uppercase tracking-[0.2em] text-amber-300 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]">
               Signed Under donob orie
             </span>
@@ -847,7 +808,7 @@ export default function Home() {
                 type="submit"
                 className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm mt-2"
               >
-                Send Booking Inquiry
+                Compose in Gmail
               </button>
             </form>
           </div>
@@ -880,7 +841,7 @@ export default function Home() {
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Send Email</p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Compose in Gmail</p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
