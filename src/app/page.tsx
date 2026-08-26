@@ -249,7 +249,6 @@ export default function Home() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -263,11 +262,6 @@ export default function Home() {
   const displayedVideos = useMemo(() => {
     return activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
   }, [activeTab]);
-
-  const showToast = (msg: string) => {
-    setToastMessage(msg);
-    setTimeout(() => setToastMessage(null), 4000);
-  };
 
   const handleTabChange = (tab: 'recent' | 'popular') => {
     setPlayingVideoKey(null);
@@ -294,37 +288,15 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
-  // Fixed Email Dispatcher with Instagram In-App Browser Fallback
+  // Direct Gmail Web Dispatcher for all platforms (Android, iPhone & Desktop)
   const handleEmailDispatch = (email: string, subject: string, body: string) => {
     const encodedEmail = encodeURIComponent(email);
     const encodedSubject = encodeURIComponent(subject);
     const encodedBody = encodeURIComponent(body);
 
-    const ua = navigator.userAgent || navigator.vendor;
+    const gmailWebUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
     
-    // Detect Instagram, Facebook, and WebKit in-app browsers
-    const isInAppBrowser = /Instagram|FBAN|FBAV|Line|Twitter/i.test(ua);
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua);
-
-    if (isInAppBrowser) {
-      // In-app browsers block app switching; copy payload to clipboard & notify user
-      const fullTextPayload = `To: ${email}\nSubject: ${subject}\n\n${body}`;
-      navigator.clipboard.writeText(fullTextPayload).then(() => {
-        showToast('📋 Details copied to clipboard! Paste into your mail app.');
-      }).catch(() => {
-        window.location.href = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
-      });
-      return;
-    }
-
-    if (isMobile) {
-      // Standard Mobile Browsers (Safari / Chrome)
-      window.location.href = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
-    } else {
-      // Desktop Browsers: Direct Web Gmail Compose
-      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
-      window.open(gmailUrl, '_blank', 'noopener,noreferrer');
-    }
+    window.open(gmailWebUrl, '_blank', 'noopener,noreferrer');
   };
 
   // Booking Form Submission Handler
@@ -374,13 +346,6 @@ export default function Home() {
 
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
-      
-      {/* Dynamic Toast Notification Banner */}
-      {toastMessage && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[100] bg-amber-500 text-black px-6 py-3 rounded-2xl font-bold text-xs shadow-2xl animate-bounce border border-white/20 text-center max-w-[90vw]">
-          {toastMessage}
-        </div>
-      )}
 
       {/* Navbar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
