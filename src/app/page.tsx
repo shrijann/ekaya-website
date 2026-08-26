@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, FormEvent } from 'react';
+import { useState, useEffect, useMemo, useCallback, FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -263,10 +263,10 @@ export default function Home() {
     return activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
   }, [activeTab]);
 
-  const handleTabChange = (tab: 'recent' | 'popular') => {
+  const handleTabChange = useCallback((tab: 'recent' | 'popular') => {
     setPlayingVideoKey(null);
     setActiveTab(tab);
-  };
+  }, []);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -282,23 +282,18 @@ export default function Home() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, []);
 
-  const getTomorrowDate = () => {
+  const getTomorrowDate = useCallback(() => {
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     return tomorrow.toISOString().split('T')[0];
-  };
+  }, []);
 
-  // Direct launcher for mail.google.com without Workspace redirects
-  const handleEmailDispatch = (email: string, subject: string, body: string) => {
-    const encodedEmail = encodeURIComponent(email);
-    const encodedSubject = encodeURIComponent(subject);
-    const encodedBody = encodeURIComponent(body);
+  // Dispatch directly to mail.google.com target parameters
+  const dispatchToGmailWeb = useCallback((email: string, subject: string, body: string) => {
+    const targetUrl = `https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    window.open(targetUrl, '_blank', 'noopener,noreferrer');
+  }, []);
 
-    const gmailUrl = `https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=${encodedEmail}&su=${encodedSubject}&body=${encodedBody}`;
-    window.open(gmailUrl, '_blank', 'noopener,noreferrer');
-  };
-
-  // Booking Form Submission Handler
   const handleBookingSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError('');
@@ -327,26 +322,25 @@ export default function Home() {
       `Location: ${formData.location}\n\n` +
       `Details:\n${formData.details || 'None'}`;
 
-    handleEmailDispatch(targetEmail, rawSubject, rawBody);
+    dispatchToGmailWeb(targetEmail, rawSubject, rawBody);
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
   };
 
-  // Contact Manager Handler
   const handleContactManagerGmail = () => {
     const targetEmail = 'donob.sujal@gmail.com';
     const rawSubject = 'Inquiry for Ekaya Hami Management';
     const rawBody = 'Hello Ekaya Hami Management,\n\nI would like to inquire regarding...';
 
-    handleEmailDispatch(targetEmail, rawSubject, rawBody);
+    dispatchToGmailWeb(targetEmail, rawSubject, rawBody);
     setIsManagerContactOpen(false);
   };
 
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
 
-      {/* Navbar */}
+      {/* Navigation Bar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
           <div className="relative w-9 h-9 rounded-full overflow-hidden border border-amber-500/40 group-hover:border-amber-500 transition-colors">
@@ -569,7 +563,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Band Members Section */}
+      {/* Ensemble & Performers Section */}
       <section id="members" className="py-16 px-6 max-w-7xl mx-auto border-b border-white/5">
         <div className="text-center mb-12">
           <span className="text-amber-500 text-xs font-bold uppercase tracking-widest">Ensemble & Performers</span>
@@ -808,7 +802,7 @@ export default function Home() {
         </div>
       )}
 
-      {/* Manager Contact Selection Modal */}
+      {/* Manager Contact Modal */}
       {isManagerContactOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsManagerContactOpen(false)}>
           <div className="bg-[#121215] border border-white/20 max-w-sm w-full rounded-3xl p-6 relative text-center animate-in fade-in zoom-in-95 duration-200 shadow-[0_0_30px_rgba(245,158,11,0.15)]" onClick={(e) => e.stopPropagation()}>
