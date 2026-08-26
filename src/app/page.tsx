@@ -807,7 +807,7 @@ export default function Home() {
                 type="submit"
                 className="w-full bg-amber-500 hover:bg-amber-400 text-black font-bold py-3 rounded-xl transition-all shadow-lg shadow-amber-500/20 text-sm mt-2"
               >
-                Proceed to Email Draft
+                Proceed to Email 
               </button>
             </form>
           </div>
@@ -840,7 +840,7 @@ export default function Home() {
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Proceed to Email Draft</p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Proceed to Email </p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
