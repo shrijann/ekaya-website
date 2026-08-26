@@ -251,6 +251,9 @@ export default function Home() {
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
 
+  // Universal Notification Toast State
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
   // Booking Form State
   const [formData, setFormData] = useState({
     name: '',
@@ -268,6 +271,13 @@ export default function Home() {
   const handleTabChange = (tab: 'recent' | 'popular') => {
     setPlayingVideoKey(null);
     setActiveTab(tab);
+  };
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage(null);
+    }, 4500);
   };
 
   useEffect(() => {
@@ -290,6 +300,33 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
+  // Helper to detect restricted In-App Browsers (Instagram, Messenger, FB, Snapchat, etc.)
+  const isInAppBrowser = () => {
+    if (typeof window === 'undefined') return false;
+    const ua = navigator.userAgent || navigator.vendor || (window as unknown as { opera?: string }).opera || '';
+    return /Instagram|FB_IAB|FBAV|Messenger|Snapchat|LinkedIn|MicroMessenger|TikTok/i.test(ua);
+  };
+
+  // Fallback Copy Function
+  const copyToClipboard = async (text: string, notificationMessage: string) => {
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+      }
+      showToast(notificationMessage);
+    } catch {
+      showToast(`Copy failed. Email target: ${text}`);
+    }
+  };
+
+  // Booking Inquiry Handler
   const handleBookingSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError('');
@@ -310,37 +347,51 @@ export default function Home() {
     }
 
     const targetEmail = 'donobmail@gmail.com';
-    const subject = encodeURIComponent(`Booking Inquiry: ${formData.name}`);
-    const body = encodeURIComponent(
+    const rawSubject = `Booking Inquiry: ${formData.name}`;
+    const rawBody = 
       `Name/Org: ${formData.name}\n` +
       `Contact: ${cleanContact}\n` +
       `Date: ${formData.eventDate}\n` +
       `Location: ${formData.location}\n\n` +
-      `Details:\n${formData.details || 'None'}`
-    );
+      `Details:\n${formData.details || 'None'}`;
 
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+    const subject = encodeURIComponent(rawSubject);
+    const body = encodeURIComponent(rawBody);
+
+    if (isInAppBrowser()) {
+      // In-App browser detected -> Copy prefilled inquiry & instruct user
+      const fullText = `To: ${targetEmail}\nSubject: ${rawSubject}\n\n${rawBody}`;
+      copyToClipboard(fullText, 'Inquiry text copied to clipboard! Please open your Mail App or Safari to send.');
     } else {
-      const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${targetEmail}&su=${subject}&body=${body}`;
-      window.open(gmailUrl, '_blank');
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+      } else {
+        const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${targetEmail}&su=${subject}&body=${body}`;
+        window.open(gmailUrl, '_blank');
+      }
     }
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
   };
 
+  // Manager Contact Handler
   const handleContactManagerGmail = () => {
     const targetEmail = 'donob.sujal@gmail.com';
-    const subject = encodeURIComponent('Inquiry for Ekaya Hami Management');
+    const rawSubject = 'Inquiry for Ekaya Hami Management';
+    const subject = encodeURIComponent(rawSubject);
 
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-      window.location.href = `mailto:${targetEmail}?subject=${subject}`;
+    if (isInAppBrowser()) {
+      copyToClipboard(targetEmail, 'Manager Email (donob.sujal@gmail.com) copied to clipboard!');
     } else {
-      const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${targetEmail}&su=${subject}`;
-      window.open(gmailUrl, '_blank');
+      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+      if (isMobile) {
+        window.location.href = `mailto:${targetEmail}?subject=${subject}`;
+      } else {
+        const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${targetEmail}&su=${subject}`;
+        window.open(gmailUrl, '_blank');
+      }
     }
 
     setIsManagerContactOpen(false);
@@ -349,6 +400,14 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
       
+      {/* Toast Notification Banner */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 max-w-sm bg-amber-500 text-black font-semibold text-xs px-5 py-3.5 rounded-2xl shadow-2xl border border-amber-400 flex items-center space-x-3 animate-in fade-in slide-in-from-bottom-5 duration-300">
+          <span>📋</span>
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
       {/* Navbar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
