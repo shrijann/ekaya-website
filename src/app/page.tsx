@@ -251,7 +251,7 @@ export default function Home() {
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
 
-  // Universal Notification Toast State
+  // Notification Toast State
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Booking Form State
@@ -300,29 +300,38 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
-  // Helper to detect restricted In-App Browsers (Instagram, Messenger, FB, Snapchat, etc.)
-  const isInAppBrowser = () => {
-    if (typeof window === 'undefined') return false;
-    const ua = navigator.userAgent || navigator.vendor || (window as unknown as { opera?: string }).opera || '';
-    return /Instagram|FB_IAB|FBAV|Messenger|Snapchat|LinkedIn|MicroMessenger|TikTok/i.test(ua);
-  };
+  // Improved Email Trigger for In-App Browsers (Instagram/Facebook/TikTok)
+  const handleEmailAction = async (email: string, subject: string, body: string) => {
+    const encodedSubject = encodeURIComponent(subject);
+    const encodedBody = encodeURIComponent(body);
+    const mailtoUrl = `mailto:${email}?subject=${encodedSubject}&body=${encodedBody}`;
 
-  // Fallback Copy Function
-  const copyToClipboard = async (text: string, notificationMessage: string) => {
+    // 1. Force attempt to launch the device's native mail app
+    const win = window.open(mailtoUrl, '_self');
+    if (!win) {
+      window.location.href = mailtoUrl;
+    }
+
+    // 2. Silent copy-paste fallback for trapped WebViews
+    const clipboardText = `To: ${email}\nSubject: ${subject}\n\n${body}`;
     try {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        await navigator.clipboard.writeText(text);
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(clipboardText);
       } else {
         const textarea = document.createElement('textarea');
-        textarea.value = text;
+        textarea.value = clipboardText;
+        textarea.style.position = 'fixed';
+        textarea.style.left = '-9999px';
+        textarea.style.top = '-9999px';
         document.body.appendChild(textarea);
+        textarea.focus();
         textarea.select();
         document.execCommand('copy');
         document.body.removeChild(textarea);
       }
-      showToast(notificationMessage);
+      showToast("Opening Mail app... (Text copied to clipboard as backup)");
     } catch {
-      showToast(`Copy failed. Email target: ${text}`);
+      showToast("Opening Mail app...");
     }
   };
 
@@ -355,22 +364,7 @@ export default function Home() {
       `Location: ${formData.location}\n\n` +
       `Details:\n${formData.details || 'None'}`;
 
-    const subject = encodeURIComponent(rawSubject);
-    const body = encodeURIComponent(rawBody);
-
-    if (isInAppBrowser()) {
-      // In-App browser detected -> Copy prefilled inquiry & instruct user
-      const fullText = `To: ${targetEmail}\nSubject: ${rawSubject}\n\n${rawBody}`;
-      copyToClipboard(fullText, 'Inquiry text copied to clipboard! Please open your Mail App or Safari to send.');
-    } else {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
-      } else {
-        const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${targetEmail}&su=${subject}&body=${body}`;
-        window.open(gmailUrl, '_blank');
-      }
-    }
+    handleEmailAction(targetEmail, rawSubject, rawBody);
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
@@ -380,20 +374,9 @@ export default function Home() {
   const handleContactManagerGmail = () => {
     const targetEmail = 'donob.sujal@gmail.com';
     const rawSubject = 'Inquiry for Ekaya Hami Management';
-    const subject = encodeURIComponent(rawSubject);
+    const rawBody = 'Hello Ekaya Hami Management,\n\nI would like to inquire regarding...';
 
-    if (isInAppBrowser()) {
-      copyToClipboard(targetEmail, 'Manager Email (donob.sujal@gmail.com) copied to clipboard!');
-    } else {
-      const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-      if (isMobile) {
-        window.location.href = `mailto:${targetEmail}?subject=${subject}`;
-      } else {
-        const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${targetEmail}&su=${subject}`;
-        window.open(gmailUrl, '_blank');
-      }
-    }
-
+    handleEmailAction(targetEmail, rawSubject, rawBody);
     setIsManagerContactOpen(false);
   };
 
@@ -403,7 +386,7 @@ export default function Home() {
       {/* Toast Notification Banner */}
       {toastMessage && (
         <div className="fixed bottom-6 right-6 z-50 max-w-sm bg-amber-500 text-black font-semibold text-xs px-5 py-3.5 rounded-2xl shadow-2xl border border-amber-400 flex items-center space-x-3 animate-in fade-in slide-in-from-bottom-5 duration-300">
-          <span>📋</span>
+          <span>📬</span>
           <span>{toastMessage}</span>
         </div>
       )}
@@ -433,6 +416,7 @@ export default function Home() {
           </Link>
 
           <button
+            type="button"
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="md:hidden text-neutral-300 hover:text-amber-500 focus:outline-none p-1"
             aria-label="Toggle menu"
@@ -496,7 +480,7 @@ export default function Home() {
               <span>Watch Videos</span>
             </a>
             
-            <button onClick={() => setIsBookingOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-neutral-100 font-semibold px-8 py-3.5 rounded-2xl transition-all hover:scale-105">
+            <button type="button" onClick={() => setIsBookingOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-neutral-100 font-semibold px-8 py-3.5 rounded-2xl transition-all hover:scale-105">
               <span>Book Live Performance</span>
             </button>
           </div>
@@ -548,12 +532,14 @@ export default function Home() {
           
           <div className="inline-flex p-1 bg-neutral-900 border border-white/10 rounded-2xl mt-6">
             <button 
+              type="button"
               onClick={() => handleTabChange('recent')} 
               className={`px-6 py-2.5 text-xs font-semibold rounded-xl transition-all ${activeTab === 'recent' ? 'bg-amber-500 text-black font-bold' : 'text-neutral-400 hover:text-white'}`}
             >
               Recent Releases
             </button>
             <button 
+              type="button"
               onClick={() => handleTabChange('popular')} 
               className={`px-6 py-2.5 text-xs font-semibold rounded-xl transition-all ${activeTab === 'popular' ? 'bg-amber-500 text-black font-bold' : 'text-neutral-400 hover:text-white'}`}
             >
@@ -653,6 +639,7 @@ export default function Home() {
               <p className="text-xs text-amber-500 font-medium mt-0.5 uppercase tracking-wider">{member.role}</p>
 
               <button
+                type="button"
                 onClick={(e) => {
                   e.stopPropagation();
                   setSelectedMember(member);
@@ -688,6 +675,7 @@ export default function Home() {
                 <p className="text-xs text-amber-500 font-medium mt-0.5 uppercase tracking-wider">{member.role}</p>
 
                 <button
+                  type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     setSelectedMember(member);
@@ -706,7 +694,7 @@ export default function Home() {
       {selectedMember && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setSelectedMember(null)}>
           <div className="bg-[#121215] border border-white/20 max-w-md w-full rounded-3xl p-6 sm:p-8 relative text-center animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setSelectedMember(null)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
+            <button type="button" onClick={() => setSelectedMember(null)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
               ✕
             </button>
 
@@ -749,7 +737,7 @@ export default function Home() {
       {zoomedImage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md" onClick={() => setZoomedImage(null)}>
           <div className="relative max-w-3xl max-h-[85vh] w-full h-full flex items-center justify-center p-2 animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setZoomedImage(null)} aria-label="Close image preview" className="absolute top-2 right-2 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border border-white/20 z-10">
+            <button type="button" onClick={() => setZoomedImage(null)} aria-label="Close image preview" className="absolute top-2 right-2 text-white bg-white/10 hover:bg-white/20 rounded-full w-10 h-10 flex items-center justify-center text-lg font-bold border border-white/20 z-10">
               ✕
             </button>
             <div className="relative w-full h-full rounded-3xl overflow-hidden border border-white/20">
@@ -763,7 +751,7 @@ export default function Home() {
       {isBookingOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsBookingOpen(false)}>
           <div className="bg-[#121215] border border-white/20 max-w-lg w-full rounded-3xl p-6 sm:p-8 relative animate-in fade-in zoom-in-95 duration-200" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setIsBookingOpen(false)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
+            <button type="button" onClick={() => setIsBookingOpen(false)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
               ✕
             </button>
 
@@ -870,7 +858,7 @@ export default function Home() {
       {isManagerContactOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md" onClick={() => setIsManagerContactOpen(false)}>
           <div className="bg-[#121215] border border-white/20 max-w-sm w-full rounded-3xl p-6 relative text-center animate-in fade-in zoom-in-95 duration-200 shadow-[0_0_30px_rgba(245,158,11,0.15)]" onClick={(e) => e.stopPropagation()}>
-            <button onClick={() => setIsManagerContactOpen(false)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
+            <button type="button" onClick={() => setIsManagerContactOpen(false)} aria-label="Close modal" className="absolute top-4 right-5 text-neutral-400 hover:text-white text-xl font-bold p-2">
               ✕
             </button>
 
@@ -892,7 +880,7 @@ export default function Home() {
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Send Email via Gmail</p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Send Email</p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
@@ -930,11 +918,11 @@ export default function Home() {
           </p>
 
           <div className="flex flex-wrap justify-center items-center gap-4">
-            <button onClick={() => setIsBookingOpen(true)} className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
+            <button type="button" onClick={() => setIsBookingOpen(true)} className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
               Submit Booking Request Form
             </button>
             
-            <button onClick={() => setIsManagerContactOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-white font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
+            <button type="button" onClick={() => setIsManagerContactOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-white font-semibold px-8 py-3.5 rounded-2xl transition-all text-sm">
               Contact Manager
             </button>
           </div>
