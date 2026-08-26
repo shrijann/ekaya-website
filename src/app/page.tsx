@@ -290,7 +290,6 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
-  // 1. Submit Booking Inquiry -> Opens Gmail directly to donobmail@gmail.com
   const handleBookingSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError('');
@@ -320,20 +319,30 @@ export default function Home() {
       `Details:\n${formData.details || 'None'}`
     );
 
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}&su=${subject}&body=${body}`;
-    window.open(gmailUrl, '_blank');
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = `mailto:${targetEmail}?subject=${subject}&body=${body}`;
+    } else {
+      const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${targetEmail}&su=${subject}&body=${body}`;
+      window.open(gmailUrl, '_blank');
+    }
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
   };
 
-  // 2. Direct Contact Manager -> Opens Gmail directly to donob.sujal@gmail.com
   const handleContactManagerGmail = () => {
     const targetEmail = 'donob.sujal@gmail.com';
     const subject = encodeURIComponent('Inquiry for Ekaya Hami Management');
-    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}&su=${subject}`;
-    
-    window.open(gmailUrl, '_blank');
+
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobile) {
+      window.location.href = `mailto:${targetEmail}?subject=${subject}`;
+    } else {
+      const gmailUrl = `https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${targetEmail}&su=${subject}`;
+      window.open(gmailUrl, '_blank');
+    }
+
     setIsManagerContactOpen(false);
   };
 
