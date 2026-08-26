@@ -309,6 +309,7 @@ export default function Home() {
       return;
     }
 
+    const targetEmail = 'donobmail@gmail.com';
     const subject = encodeURIComponent(`Booking Inquiry: ${formData.name}`);
     const body = encodeURIComponent(
       `Name/Org: ${formData.name}\n` +
@@ -318,8 +319,9 @@ export default function Home() {
       `Details:\n${formData.details || 'None'}`
     );
 
-    // Show Booking requests sent to donobmail@gmail.com
-    window.location.href = `mailto:donobmail@gmail.com?subject=${subject}&body=${body}`;
+    // Forces browser directly into Gmail web composer tab
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}&su=${subject}&body=${body}`;
+    window.open(gmailUrl, '_blank');
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
@@ -805,13 +807,15 @@ export default function Home() {
 
             <div className="space-y-3">
               <a
-                href={`mailto:donob.sujal@gmail.com?subject=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
+                href={`https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
               >
                 <div className="flex items-center space-x-3">
                   <span className="text-lg">✉️</span>
                   <div className="text-left">
-                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Send Email</p>
+                    <p className="text-xs font-bold text-white group-hover:text-black transition-colors">Send Email via Gmail</p>
                     <p className="text-[10px] text-neutral-400 group-hover:text-black/80 transition-colors">donob.sujal@gmail.com</p>
                   </div>
                 </div>
