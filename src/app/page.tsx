@@ -290,6 +290,7 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   };
 
+  // 1. Submit Booking Inquiry -> Opens Gmail directly to donobmail@gmail.com
   const handleBookingSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFormError('');
@@ -319,12 +320,21 @@ export default function Home() {
       `Details:\n${formData.details || 'None'}`
     );
 
-    // Forces browser directly into Gmail web composer tab
     const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}&su=${subject}&body=${body}`;
     window.open(gmailUrl, '_blank');
 
     setIsBookingOpen(false);
     setFormData({ name: '', contact: '', eventDate: '', location: '', details: '' });
+  };
+
+  // 2. Direct Contact Manager -> Opens Gmail directly to donob.sujal@gmail.com
+  const handleContactManagerGmail = () => {
+    const targetEmail = 'donob.sujal@gmail.com';
+    const subject = encodeURIComponent('Inquiry for Ekaya Hami Management');
+    const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${targetEmail}&su=${subject}`;
+    
+    window.open(gmailUrl, '_blank');
+    setIsManagerContactOpen(false);
   };
 
   return (
@@ -806,10 +816,9 @@ export default function Home() {
             <p className="text-xs text-neutral-400 mb-6">Choose how you'd like to reach Sujal Suwal</p>
 
             <div className="space-y-3">
-              <a
-                href={`https://mail.google.com/mail/?view=cm&fs=1&to=donob.sujal@gmail.com&su=${encodeURIComponent('Inquiry for Ekaya Hami Management')}`}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                type="button"
+                onClick={handleContactManagerGmail}
                 className="w-full flex items-center justify-between p-3.5 bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 rounded-2xl transition-all group"
               >
                 <div className="flex items-center space-x-3">
@@ -820,7 +829,7 @@ export default function Home() {
                   </div>
                 </div>
                 <span className="text-xs font-semibold group-hover:translate-x-1 transition-transform">→</span>
-              </a>
+              </button>
 
               <a
                 href="tel:+9779800000000"
