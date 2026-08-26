@@ -288,9 +288,11 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   }, []);
 
-  // Dispatch directly to mail.google.com target parameters
-  const dispatchToGmailWeb = useCallback((email: string, subject: string, body: string) => {
-    const targetUrl = `https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=${encodeURIComponent(email)}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  // Direct composition link to Web Gmail bypassing OS handlers and Workspace redirects
+  const dispatchToGmailWeb = useCallback((email: string, subject?: string, body?: string) => {
+    let targetUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
+    if (subject) targetUrl += `&su=${encodeURIComponent(subject)}`;
+    if (body) targetUrl += `&body=${encodeURIComponent(body)}`;
     window.open(targetUrl, '_blank', 'noopener,noreferrer');
   }, []);
 
@@ -330,10 +332,7 @@ export default function Home() {
 
   const handleContactManagerGmail = () => {
     const targetEmail = 'donob.sujal@gmail.com';
-    const rawSubject = 'Inquiry for Ekaya Hami Management';
-    const rawBody = 'Hello Ekaya Hami Management,\n\nI would like to inquire regarding...';
-
-    dispatchToGmailWeb(targetEmail, rawSubject, rawBody);
+    dispatchToGmailWeb(targetEmail);
     setIsManagerContactOpen(false);
   };
 
