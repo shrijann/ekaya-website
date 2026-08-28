@@ -288,41 +288,17 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   }, []);
 
-  // Handles compose redirect: Native Gmail App -> Mobile Mailto Fallback -> Desktop Web Gmail
+  // Optimized Direct Compose Link across Web, PC, iOS, & Android
   const dispatchToGmailWeb = useCallback((email: string, subject?: string, body?: string) => {
+    let targetUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
+    if (subject) targetUrl += `&su=${encodeURIComponent(subject)}`;
+    if (body) targetUrl += `&body=${encodeURIComponent(body)}`;
+
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
     if (isMobile) {
-      const encodedEmail = encodeURIComponent(email);
-      const encodedSubject = subject ? encodeURIComponent(subject) : '';
-      const encodedBody = body ? encodeURIComponent(body) : '';
-
-      // 1. Target the native Gmail app directly
-      const gmailAppUrl = `googlegmail:///co?to=${encodedEmail}&subject=${encodedSubject}&body=${encodedBody}`;
-      
-      // 2. Prepare standard mailto link fallback
-      let mailtoUrl = `mailto:${encodedEmail}`;
-      const params: string[] = [];
-      if (subject) params.push(`subject=${encodedSubject}`);
-      if (body) params.push(`body=${encodedBody}`);
-      if (params.length > 0) mailtoUrl += `?${params.join('&')}`;
-
-      // Launch Gmail App; trigger mailto if Gmail App is not installed
-      const start = Date.now();
-      window.location.href = gmailAppUrl;
-
-      setTimeout(() => {
-        if (Date.now() - start < 1500) {
-          window.location.href = mailtoUrl;
-        }
-      }, 500);
-
+      window.location.href = targetUrl;
     } else {
-      // Desktop / PC Browser fallback
-      let targetUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
-      if (subject) targetUrl += `&su=${encodeURIComponent(subject)}`;
-      if (body) targetUrl += `&body=${encodeURIComponent(body)}`;
-      
       window.open(targetUrl, '_blank', 'noopener,noreferrer');
     }
   }, []);
