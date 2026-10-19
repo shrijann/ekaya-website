@@ -167,6 +167,20 @@ const MANAGEMENT: Member[] = [
 
 const RECENT_VIDEOS: Video[] = [
   {
+    uniqueKey: 'rec-gaacho',
+    title: 'Gaacho - Shreejan Shyama and Priya Basnet | Ekaya Hami',
+    id: 'Izvddx6Nwic',
+    desc: 'Latest Single Release.',
+    url: 'https://www.youtube.com/watch?v=Izvddx6Nwic',
+  },
+  {
+    uniqueKey: 'rec-fakandali',
+    title: 'Fakandali | Ekaya Hami',
+    id: 'vT5hUoXWDCQ',
+    desc: 'Official Music Video release.',
+    url: 'https://www.youtube.com/watch?v=vT5hUoXWDCQ',
+  },
+  {
     uniqueKey: 'rec-1',
     title: 'Jhan Jaka Maya - Ekaya Hami | Live at Asan',
     id: 'OzyBRsBbeNE',
@@ -217,6 +231,13 @@ const POPULAR_VIDEOS: Video[] = [
     id: 'KHpnE8_hHts',
     desc: 'Popular studio session performance.',
     url: 'https://www.youtube.com/watch?v=KHpnE8_hHts',
+  },
+  {
+    uniqueKey: 'pop-gaacho',
+    title: 'Gaacho - Shreejan Shyama and Priya Basnet | Ekaya Hami',
+    id: 'Izvddx6Nwic',
+    desc: 'New trending single.',
+    url: 'https://www.youtube.com/watch?v=Izvddx6Nwic',
   },
   {
     uniqueKey: 'pop-3',
@@ -314,8 +335,8 @@ export default function Home() {
       return;
     }
 
-    const isPhone = /^\d{10}$/.test(cleanContact);
-    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanContact);
+    const isPhone = /^\d{10}\$/.test(cleanContact);
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+\$/.test(cleanContact);
 
     if (!isPhone && !isEmail) {
       setFormError('Please enter a valid 10-digit mobile number or a valid email address.');
