@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback, FormEvent } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, FormEvent } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -271,6 +271,8 @@ export default function Home() {
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
 
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
   const [formData, setFormData] = useState({
     name: '',
     contact: '',
@@ -280,6 +282,11 @@ export default function Home() {
   });
   const [formError, setFormError] = useState('');
 
+  // Check if any modal is active
+  const isAnyModalOpen = useMemo(() => {
+    return Boolean(selectedMember || zoomedImage || isBookingOpen || isManagerContactOpen);
+  }, [selectedMember, zoomedImage, isBookingOpen, isManagerContactOpen]);
+
   const displayedVideos = useMemo(() => {
     return activeTab === 'recent' ? RECENT_VIDEOS : POPULAR_VIDEOS;
   }, [activeTab]);
@@ -288,6 +295,93 @@ export default function Home() {
     setPlayingVideoKey(null);
     setActiveTab(tab);
   }, []);
+
+  // Lightweight Animated Live Concert Stage Canvas (Bhaktapur Stage)
+  useEffect(() => {
+    if (isAnyModalOpen) return;
+
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let time = 0;
+
+    const render = () => {
+      time += 0.03;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Dark Sky Background
+      ctx.fillStyle = '#0a0a0d';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Bhaktapur Temple Silhouette (Background)
+      ctx.fillStyle = '#141419';
+      // Center Pagoda Temple
+      ctx.beginPath();
+      ctx.moveTo(60, 45); ctx.lineTo(80, 25); ctx.lineTo(100, 45); ctx.fill();
+      ctx.fillRect(68, 45, 24, 25);
+      ctx.beginPath();
+      ctx.moveTo(50, 70); ctx.lineTo(80, 50); ctx.lineTo(110, 70); ctx.fill();
+      ctx.fillRect(58, 70, 44, 20);
+
+      // Stage Spotlights (Moving Beams)
+      const beam1 = Math.sin(time) * 30;
+      const beam2 = Math.cos(time * 0.8) * 30;
+
+      ctx.save();
+      ctx.globalCompositeOperation = 'screen';
+
+      // Left Amber Beam
+      const grad1 = ctx.createRadialGradient(20, 0, 0, 80 + beam1, 100, 70);
+      grad1.addColorStop(0, 'rgba(245, 158, 11, 0.45)');
+      grad1.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad1;
+      ctx.beginPath();
+      ctx.moveTo(20, 0); ctx.lineTo(30 + beam1, 100); ctx.lineTo(90 + beam1, 100); ctx.closePath();
+      ctx.fill();
+
+      // Right Orange Beam
+      const grad2 = ctx.createRadialGradient(140, 0, 0, 80 + beam2, 100, 70);
+      grad2.addColorStop(0, 'rgba(234, 88, 12, 0.45)');
+      grad2.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = grad2;
+      ctx.beginPath();
+      ctx.moveTo(140, 0); ctx.lineTo(70 + beam2, 100); ctx.lineTo(130 + beam2, 100); ctx.closePath();
+      ctx.fill();
+
+      ctx.restore();
+
+      // Concert Stage Platform
+      ctx.fillStyle = '#18181f';
+      ctx.fillRect(10, 82, 140, 18);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(10, 82, 140, 1.5);
+
+      // 7 Band Members (Glowing Silhouettes Playing Instruments)
+      const positions = [22, 40, 58, 80, 102, 120, 138];
+      positions.forEach((x, i) => {
+        const bounce = Math.sin(time * 3 + i) * 1.5;
+        ctx.fillStyle = '#fbbf24';
+        // Member head
+        ctx.beginPath();
+        ctx.arc(x, 72 + bounce, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        // Member body
+        ctx.fillStyle = '#d97706';
+        ctx.fillRect(x - 1.5, 75 + bounce, 3, 7);
+      });
+
+      animationFrameId = requestAnimationFrame(render);
+    };
+
+    render();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [isAnyModalOpen]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -309,7 +403,6 @@ export default function Home() {
     return tomorrow.toISOString().split('T')[0];
   }, []);
 
-  // Optimized Direct Compose Link across Web, PC, iOS, & Android
   const dispatchToGmailWeb = useCallback((email: string, subject?: string, body?: string) => {
     let targetUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}`;
     if (subject) targetUrl += `&su=${encodeURIComponent(subject)}`;
@@ -366,6 +459,23 @@ export default function Home() {
 
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
+
+      {/* Floating Animated Minimal Stage Widget (Top-Left Corner) */}
+      {!isAnyModalOpen && (
+        <div className="fixed top-20 left-4 z-30 hidden sm:block pointer-events-none transition-opacity duration-300">
+          <div className="bg-[#0e0e12]/80 backdrop-blur-md border border-amber-500/30 rounded-2xl p-2 shadow-[0_0_20px_rgba(245,158,11,0.2)] flex flex-col items-center">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 mb-1">
+              Bhaktapur Live Stage
+            </span>
+            <canvas
+              ref={canvasRef}
+              width={160}
+              height={100}
+              className="rounded-xl border border-white/10"
+            />
+          </div>
+        </div>
+      )}
 
       {/* Navigation Bar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
