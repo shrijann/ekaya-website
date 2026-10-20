@@ -295,7 +295,7 @@ export default function Home() {
     setActiveTab(tab);
   }, []);
 
-  // Professional 3D-Depth Realistic Concert Stage Visualizer
+  // Professional Concert Stage Engine with Basantapur Heritage Skyline
   useEffect(() => {
     if (isAnyModalOpen) return;
 
@@ -308,183 +308,203 @@ export default function Home() {
     let time = 0;
 
     const render = () => {
-      time += 0.03;
+      time += 0.025;
       const w = canvas.width;
       const h = canvas.height;
 
       ctx.clearRect(0, 0, w, h);
 
-      // Deep Stage Gradient Background
+      // Night Concert Atmosphere Gradient
       const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
-      bgGrad.addColorStop(0, '#050508');
-      bgGrad.addColorStop(0.7, '#0d0b14');
+      bgGrad.addColorStop(0, '#040407');
+      bgGrad.addColorStop(0.65, '#0d0b16');
       bgGrad.addColorStop(1, '#020204');
       ctx.fillStyle = bgGrad;
       ctx.fillRect(0, 0, w, h);
 
-      // Bhaktapur Temples Silhouette & Horizon Glow
-      ctx.fillStyle = '#0a0a0f';
+      // Basantapur / Durbar Square Pagoda Temple Skyline (Multi-roof Newa Heritage Backdrop)
+      ctx.fillStyle = '#0a0a10';
+      // Center Maju Dega Pagoda
       ctx.beginPath();
-      // Left Nyatapola Silhouette
-      ctx.moveTo(10, 42); ctx.lineTo(25, 20); ctx.lineTo(40, 42); ctx.fill();
-      ctx.fillRect(18, 42, 14, 25);
-      // Right Temple Silhouette
+      ctx.moveTo(w / 2 - 25, 45); ctx.lineTo(w / 2, 22); ctx.lineTo(w / 2 + 25, 45); ctx.fill();
+      ctx.fillRect(w / 2 - 18, 45, 36, 20);
       ctx.beginPath();
-      ctx.moveTo(180, 45); ctx.lineTo(195, 25); ctx.lineTo(210, 45); ctx.fill();
-      ctx.fillRect(188, 45, 14, 22);
+      ctx.moveTo(w / 2 - 35, 65); ctx.lineTo(w / 2, 45); ctx.lineTo(w / 2 + 35, 65); ctx.fill();
+      ctx.fillRect(w / 2 - 26, 65, 52, 25);
 
-      // Volumetric Sweeping Spotlights & Stage Fog
-      const sweep1 = Math.sin(time) * 35;
-      const sweep2 = Math.cos(time * 0.7) * 35;
+      // Left & Right Temple Pillars
+      ctx.fillRect(15, 35, 20, 55);
+      ctx.fillRect(w - 35, 35, 20, 55);
+
+      // Dynamic Moving Stage Spotlights & Lasers
+      const sweepLeft = Math.sin(time) * 40;
+      const sweepRight = Math.cos(time * 0.8) * 40;
 
       ctx.save();
       ctx.globalCompositeOperation = 'screen';
 
       // Warm Amber Spotlight
-      const spot1 = ctx.createLinearGradient(30, 0, 80 + sweep1, 100);
-      spot1.addColorStop(0, 'rgba(245, 158, 11, 0.45)');
-      spot1.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = spot1;
+      const spotLeft = ctx.createLinearGradient(40, 0, 80 + sweepLeft, h);
+      spotLeft.addColorStop(0, 'rgba(245, 158, 11, 0.35)');
+      spotLeft.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = spotLeft;
       ctx.beginPath();
-      ctx.moveTo(30, 0); ctx.lineTo(40 + sweep1, 100); ctx.lineTo(110 + sweep1, 100); ctx.closePath();
+      ctx.moveTo(40, 0); ctx.lineTo(30 + sweepLeft, h - 15); ctx.lineTo(120 + sweepLeft, h - 15); ctx.closePath();
       ctx.fill();
 
-      // Concert Cyan-Orange Fill
-      const spot2 = ctx.createLinearGradient(190, 0, 140 + sweep2, 100);
-      spot2.addColorStop(0, 'rgba(234, 88, 12, 0.4)');
-      spot2.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = spot2;
+      // Deep Orange Spotlight
+      const spotRight = ctx.createLinearGradient(w - 40, 0, w - 80 + sweepRight, h);
+      spotRight.addColorStop(0, 'rgba(234, 88, 12, 0.35)');
+      spotRight.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = spotRight;
       ctx.beginPath();
-      ctx.moveTo(190, 0); ctx.lineTo(100 + sweep2, 100); ctx.lineTo(170 + sweep2, 100); ctx.closePath();
+      ctx.moveTo(w - 40, 0); ctx.lineTo(w - 120 + sweepRight, h - 15); ctx.lineTo(w - 30 + sweepRight, h - 15); ctx.closePath();
       ctx.fill();
 
       ctx.restore();
 
-      // Metal Truss Rigging & Line Array Speaker Towers
-      ctx.strokeStyle = '#272733';
+      // Professional Steel Stage Truss Rigs & Speaker Arrays
+      ctx.strokeStyle = '#2d2d3d';
       ctx.lineWidth = 2;
-      // Roof Arch Truss
+      // Roof Overhead Truss Bar
       ctx.beginPath();
-      ctx.arc(w / 2, 95, 90, Math.PI * 1.18, Math.PI * 1.82);
+      ctx.moveTo(10, 12); ctx.lineTo(w - 10, 12);
+      ctx.moveTo(10, 16); ctx.lineTo(w - 10, 16);
       ctx.stroke();
 
-      // Speaker Stacks (Left & Right)
-      ctx.fillStyle = '#14141c';
-      ctx.fillRect(8, 30, 10, 38);
-      ctx.fillRect(202, 30, 10, 38);
+      // Concert Line-Array Speakers (Left & Right Stack)
+      ctx.fillStyle = '#161622';
+      ctx.fillRect(6, 20, 12, 45);
+      ctx.fillRect(w - 18, 20, 12, 45);
 
-      // Realistic Illuminated Stage Platform Perspective
-      ctx.fillStyle = '#101016';
+      // Illuminated Stage Floor Surface
+      ctx.fillStyle = '#12121a';
       ctx.beginPath();
-      ctx.moveTo(15, 76);
-      ctx.lineTo(205, 76);
-      ctx.lineTo(215, 105);
-      ctx.lineTo(5, 105);
+      ctx.moveTo(10, 88); ctx.lineTo(w - 10, 88); ctx.lineTo(w - 2, 120); ctx.lineTo(2, 120);
       ctx.closePath();
       ctx.fill();
 
-      // Stage Front LED Edge
+      // Neon LED Stage Edge
       ctx.fillStyle = '#f59e0b';
-      ctx.shadowColor = '#f59e0b';
-      ctx.shadowBlur = 8;
-      ctx.fillRect(15, 76, 190, 2);
-      ctx.shadowBlur = 0; // Reset Shadow
+      ctx.fillRect(10, 88, w - 20, 1.5);
 
-      // Precise 7 Member Ensemble Setup
-      const band = [
-        { name: 'Priya', role: 'vocal', x: 110, y: 72, depth: 1, gender: 'female' },            // Middle Vocal
-        { name: 'Shreejan', role: 'sarangi', x: 80, y: 73, depth: 1, gender: 'male' },         // Left of Vocal (Sarangi)
-        { name: 'Shrijan', role: 'flute', x: 140, y: 73, depth: 1, gender: 'male' },          // Right of Vocal (Flute)
-        { name: 'Shreena', role: 'guitar', x: 50, y: 69, depth: 0.9, gender: 'female' },       // Far Left & Back (Guitar)
-        { name: 'Amulya', role: 'nagada', x: 75, y: 64, depth: 0.8, gender: 'male' },          // Back of Sarangi (Nagada)
-        { name: 'Sudeep', role: 'taa', x: 105, y: 64, depth: 0.8, gender: 'male' },            // Right of Nagada (Effects & Taa)
-        { name: 'Bishal', role: 'madal', x: 145, y: 64, depth: 0.8, gender: 'male' },          // Back of Flutist (Madal)
+      // Perfectly Spaced Non-Overlapping 7 Band Members in Newari Attire
+      // X Positions strictly spaced across 280px width so NO ONE overlays
+      const members = [
+        { name: 'Shreena', role: 'guitar', x: 28, y: 80, gender: 'female' },      // Far Left: Guitarist (Shreena)
+        { name: 'Amulya', role: 'nagada', x: 62, y: 77, gender: 'male' },         // Left Back: Nagada Percussionist (Amulya)
+        { name: 'Shreejan', role: 'sarangi', x: 96, y: 83, gender: 'male' },      // Left Front: Director & Sarangi (Shreejan)
+        { name: 'Priya', role: 'vocal', x: 140, y: 84, gender: 'female' },        // Center Front: Lead Vocalist (Priya)
+        { name: 'Sudeep', role: 'taa', x: 184, y: 77, gender: 'male' },          // Right Back: Effects & Taa (Sudeep)
+        { name: 'Shrijan', role: 'flute', x: 218, y: 83, gender: 'male' },        // Right Front: Flutist (Shrijan)
+        { name: 'Bishal', role: 'madal', x: 252, y: 80, gender: 'male' },         // Far Right: Madal Percussionist (Bishal)
       ];
 
-      // Render Band Members with Realistic Lighting & Depth Scaling
-      band.forEach((m) => {
-        const bounce = Math.sin(time * 4.5 + m.x) * 1.2;
-        const bx = m.x;
-        const by = m.y + bounce;
-        const scale = m.depth;
+      members.forEach((m) => {
+        const bounce = Math.sin(time * 4 + m.x) * 1.1;
+        const x = m.x;
+        const y = m.y + bounce;
 
-        // Realistic Silhouette Body
-        ctx.fillStyle = m.gender === 'female' ? '#f59e0b' : '#d97706';
-        
-        // Head with Rim Light
-        ctx.beginPath();
-        ctx.arc(bx, by - 6 * scale, 3 * scale, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Torso / Dress
         if (m.gender === 'female') {
+          // Female Silhouettes in Traditional Newari Haku Patasi (Saree Style with Red Border Accent)
+          ctx.fillStyle = '#f59e0b'; // Gold Head
           ctx.beginPath();
-          ctx.moveTo(bx - 3 * scale, by - 2 * scale);
-          ctx.lineTo(bx + 3 * scale, by - 2 * scale);
-          ctx.lineTo(bx + 4.5 * scale, by + 8 * scale);
-          ctx.lineTo(bx - 4.5 * scale, by + 8 * scale);
+          ctx.arc(x, y - 10, 3.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Haku Patasi Body
+          ctx.fillStyle = '#1c1917'; // Dark Black Fabric
+          ctx.beginPath();
+          ctx.moveTo(x - 3, y - 6);
+          ctx.lineTo(x + 3, y - 6);
+          ctx.lineTo(x + 5, y + 6);
+          ctx.lineTo(x - 5, y + 6);
           ctx.closePath();
           ctx.fill();
+
+          // Red Border Ribbon Cues
+          ctx.fillStyle = '#ef4444';
+          ctx.fillRect(x - 5, y + 4, 10, 1.5);
+
+          // Instrument Cues
+          if (m.role === 'vocal') {
+            // Priya: Vocal Mic Stand
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x + 3, y - 13); ctx.lineTo(x + 3, y + 6);
+            ctx.stroke();
+            ctx.fillStyle = '#f59e0b';
+            ctx.beginPath(); ctx.arc(x + 3, y - 14, 1.5, 0, Math.PI * 2); ctx.fill();
+          } else if (m.role === 'guitar') {
+            // Shreena: Acoustic Guitar
+            ctx.strokeStyle = '#fbbf24';
+            ctx.lineWidth = 1.2;
+            ctx.beginPath();
+            ctx.moveTo(x - 6, y + 2); ctx.lineTo(x + 6, y - 2);
+            ctx.stroke();
+          }
         } else {
-          ctx.fillRect(bx - 2.5 * scale, by - 2 * scale, 5 * scale, 10 * scale);
-        }
+          // Male Silhouettes in Traditional Daura Suruwal & Dhaka Topi
+          ctx.fillStyle = '#d97706'; // Skin/Gold Tone
+          ctx.beginPath();
+          ctx.arc(x, y - 10, 3, 0, Math.PI * 2);
+          ctx.fill();
 
-        // Detailed Realistic Instruments
-        ctx.strokeStyle = '#ffffff';
-        ctx.fillStyle = '#f59e0b';
-        ctx.lineWidth = 1 * scale;
+          // Dhaka Topi Cap Cues
+          ctx.fillStyle = '#b91c1c';
+          ctx.beginPath();
+          ctx.moveTo(x - 3, y - 13);
+          ctx.lineTo(x + 3, y - 11);
+          ctx.lineTo(x + 3, y - 9);
+          ctx.lineTo(x - 3, y - 9);
+          ctx.closePath();
+          ctx.fill();
 
-        if (m.role === 'vocal') {
-          // Chrome Mic Stand & Ambient Glow
-          ctx.beginPath();
-          ctx.moveTo(bx + 2, by - 8);
-          ctx.lineTo(bx + 2, by + 8);
-          ctx.stroke();
-          ctx.beginPath();
-          ctx.arc(bx + 2, by - 9, 1.2, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (m.role === 'guitar') {
-          // Electric/Acoustic Guitar
-          ctx.beginPath();
-          ctx.moveTo(bx - 6 * scale, by + 4 * scale);
-          ctx.lineTo(bx + 6 * scale, by - 1 * scale);
-          ctx.stroke();
-        } else if (m.role === 'sarangi') {
-          // Traditional Sarangi & Bow
-          ctx.beginPath();
-          ctx.moveTo(bx - 3 * scale, by - 2 * scale);
-          ctx.lineTo(bx + 3 * scale, by + 6 * scale);
-          ctx.stroke();
-        } else if (m.role === 'flute') {
-          // Horizontal Bansuri Flute
-          ctx.beginPath();
-          ctx.moveTo(bx - 5 * scale, by - 1 * scale);
-          ctx.lineTo(bx + 5 * scale, by - 1 * scale);
-          ctx.stroke();
-        } else if (m.role === 'nagada') {
-          // Double Newari Nagada Drums
-          ctx.beginPath();
-          ctx.arc(bx - 3, by + 5, 2.5, 0, Math.PI * 2);
-          ctx.arc(bx + 3, by + 5, 2.5, 0, Math.PI * 2);
-          ctx.fill();
-        } else if (m.role === 'madal') {
-          // Horizontal Madal Drum
-          ctx.fillRect(bx - 4, by + 3, 8, 3.5);
-        } else if (m.role === 'taa') {
-          // Taa / Cymbals
-          ctx.beginPath();
-          ctx.arc(bx - 2, by + 2, 1.5, 0, Math.PI * 2);
-          ctx.arc(bx + 2, by + 2, 1.5, 0, Math.PI * 2);
-          ctx.fill();
+          // Daura Suruwal Body
+          ctx.fillStyle = '#d97706';
+          ctx.fillRect(x - 3, y - 6, 6, 12);
+
+          // Instrument Specific Cues
+          ctx.strokeStyle = '#f59e0b';
+          ctx.fillStyle = '#f59e0b';
+          ctx.lineWidth = 1.2;
+
+          if (m.role === 'sarangi') {
+            // Shreejan: Sarangi & Bow
+            ctx.beginPath();
+            ctx.moveTo(x - 4, y - 4); ctx.lineTo(x + 4, y + 4);
+            ctx.stroke();
+          } else if (m.role === 'flute') {
+            // Shrijan: Flute (Bansuri)
+            ctx.beginPath();
+            ctx.moveTo(x - 6, y - 4); ctx.lineTo(x + 6, y - 4);
+            ctx.stroke();
+          } else if (m.role === 'nagada') {
+            // Amulya: Twin Nagada Drums
+            ctx.beginPath();
+            ctx.arc(x - 3, y + 4, 2.5, 0, Math.PI * 2);
+            ctx.arc(x + 3, y + 4, 2.5, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (m.role === 'madal') {
+            // Bishal: Madal Drum
+            ctx.fillRect(x - 5, y + 2, 10, 4);
+          } else if (m.role === 'taa') {
+            // Sudeep: Taa Cymbals
+            ctx.beginPath();
+            ctx.arc(x - 2, y + 1, 1.8, 0, Math.PI * 2);
+            ctx.arc(x + 2, y + 1, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
       });
 
-      // Dynamic Audience Crowd Silhouette & Stage Smoke
-      ctx.fillStyle = '#020204';
-      for (let c = 5; c < 215; c += 10) {
-        const armWave = Math.sin(time * 5 + c) * 2;
+      // Animated Audience Crowd Silhouettes in Foreground
+      ctx.fillStyle = '#040407';
+      for (let c = 8; c < w; c += 12) {
+        const armWave = Math.sin(time * 4.5 + c) * 2;
         ctx.beginPath();
-        ctx.arc(c, 104 + armWave, 3.5, 0, Math.PI * 2);
+        ctx.arc(c, h - 3 + armWave, 4, 0, Math.PI * 2);
         ctx.fill();
       }
 
@@ -575,17 +595,17 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
 
-      {/* Floating Animated Live Stage Widget (Top-Left Corner) */}
+      {/* Floating Animated Professional Live Stage Widget (Top-Left Corner) */}
       {!isAnyModalOpen && (
-        <div className="fixed top-20 left-4 z-30 hidden sm:block pointer-events-none transition-opacity duration-300">
-          <div className="bg-[#0e0e12]/90 backdrop-blur-md border border-amber-500/30 rounded-2xl p-2.5 shadow-[0_0_25px_rgba(245,158,11,0.25)] flex flex-col items-center">
-            <span className="text-[9px] font-bold uppercase tracking-widest text-amber-400 mb-1.5">
+        <div className="fixed top-20 left-4 z-30 hidden lg:block pointer-events-none transition-opacity duration-300">
+          <div className="bg-[#0c0c10]/95 backdrop-blur-md border border-amber-500/40 rounded-2xl p-2.5 shadow-[0_0_30px_rgba(245,158,11,0.25)] flex flex-col items-center">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-amber-400 mb-1.5 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]">
               EKAYA HAMI LIVE PERFORMANCE
             </span>
             <canvas
               ref={canvasRef}
-              width={220}
-              height={110}
+              width={280}
+              height={125}
               className="rounded-xl border border-white/10"
             />
           </div>
