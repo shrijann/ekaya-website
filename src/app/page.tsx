@@ -282,7 +282,6 @@ export default function Home() {
   });
   const [formError, setFormError] = useState('');
 
-  // Check if any modal is active
   const isAnyModalOpen = useMemo(() => {
     return Boolean(selectedMember || zoomedImage || isBookingOpen || isManagerContactOpen);
   }, [selectedMember, zoomedImage, isBookingOpen, isManagerContactOpen]);
@@ -309,69 +308,156 @@ export default function Home() {
     let time = 0;
 
     const render = () => {
-      time += 0.03;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      time += 0.04;
+      const w = canvas.width;
+      const h = canvas.height;
 
-      // Dark Sky Background
-      ctx.fillStyle = '#0a0a0d';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, w, h);
 
-      // Bhaktapur Temple Silhouette (Background)
-      ctx.fillStyle = '#141419';
-      // Center Pagoda Temple
+      // Deep Concert Background
+      ctx.fillStyle = '#070709';
+      ctx.fillRect(0, 0, w, h);
+
+      // Bhaktapur Temple Silhouette Backdrop
+      ctx.fillStyle = '#111116';
+      // Pagoda Roof 1
       ctx.beginPath();
-      ctx.moveTo(60, 45); ctx.lineTo(80, 25); ctx.lineTo(100, 45); ctx.fill();
-      ctx.fillRect(68, 45, 24, 25);
+      ctx.moveTo(15, 40); ctx.lineTo(35, 20); ctx.lineTo(55, 40); ctx.fill();
+      ctx.fillRect(23, 40, 24, 25);
+      // Pagoda Roof 2
       ctx.beginPath();
-      ctx.moveTo(50, 70); ctx.lineTo(80, 50); ctx.lineTo(110, 70); ctx.fill();
-      ctx.fillRect(58, 70, 44, 20);
+      ctx.moveTo(125, 45); ctx.lineTo(145, 25); ctx.lineTo(165, 45); ctx.fill();
+      ctx.fillRect(133, 45, 24, 20);
 
-      // Stage Spotlights (Moving Beams)
-      const beam1 = Math.sin(time) * 30;
-      const beam2 = Math.cos(time * 0.8) * 30;
+      // Moving Dynamic Spotlight Beams
+      const beam1 = Math.sin(time) * 25;
+      const beam2 = Math.cos(time * 0.8) * 25;
 
       ctx.save();
       ctx.globalCompositeOperation = 'screen';
 
-      // Left Amber Beam
-      const grad1 = ctx.createRadialGradient(20, 0, 0, 80 + beam1, 100, 70);
-      grad1.addColorStop(0, 'rgba(245, 158, 11, 0.45)');
+      // Left Gold Beam
+      const grad1 = ctx.createRadialGradient(30, 10, 0, 50 + beam1, 80, 60);
+      grad1.addColorStop(0, 'rgba(245, 158, 11, 0.4)');
       grad1.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = grad1;
       ctx.beginPath();
-      ctx.moveTo(20, 0); ctx.lineTo(30 + beam1, 100); ctx.lineTo(90 + beam1, 100); ctx.closePath();
+      ctx.moveTo(30, 10); ctx.lineTo(20 + beam1, 90); ctx.lineTo(80 + beam1, 90); ctx.closePath();
       ctx.fill();
 
       // Right Orange Beam
-      const grad2 = ctx.createRadialGradient(140, 0, 0, 80 + beam2, 100, 70);
-      grad2.addColorStop(0, 'rgba(234, 88, 12, 0.45)');
+      const grad2 = ctx.createRadialGradient(150, 10, 0, 130 + beam2, 80, 60);
+      grad2.addColorStop(0, 'rgba(234, 88, 12, 0.4)');
       grad2.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = grad2;
       ctx.beginPath();
-      ctx.moveTo(140, 0); ctx.lineTo(70 + beam2, 100); ctx.lineTo(130 + beam2, 100); ctx.closePath();
+      ctx.moveTo(150, 10); ctx.lineTo(100 + beam2, 90); ctx.lineTo(160 + beam2, 90); ctx.closePath();
       ctx.fill();
 
       ctx.restore();
 
-      // Concert Stage Platform
-      ctx.fillStyle = '#18181f';
-      ctx.fillRect(10, 82, 140, 18);
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(10, 82, 140, 1.5);
+      // Curved Stage Trussing Arc
+      ctx.strokeStyle = '#33333d';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(w / 2, 85, 75, Math.PI * 1.15, Math.PI * 1.85);
+      ctx.stroke();
 
-      // 7 Band Members (Glowing Silhouettes Playing Instruments)
-      const positions = [22, 40, 58, 80, 102, 120, 138];
-      positions.forEach((x, i) => {
-        const bounce = Math.sin(time * 3 + i) * 1.5;
-        ctx.fillStyle = '#fbbf24';
-        // Member head
-        ctx.beginPath();
-        ctx.arc(x, 72 + bounce, 2.5, 0, Math.PI * 2);
-        ctx.fill();
-        // Member body
-        ctx.fillStyle = '#d97706';
-        ctx.fillRect(x - 1.5, 75 + bounce, 3, 7);
+      // Speaker Line-Array Stacks (Left & Right)
+      ctx.fillStyle = '#1c1c24';
+      ctx.fillRect(12, 35, 8, 30);
+      ctx.fillRect(160, 35, 8, 30);
+
+      // Stage Platform Base
+      ctx.fillStyle = '#14141a';
+      ctx.fillRect(15, 78, 150, 22);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillRect(15, 78, 150, 1.5);
+
+      // 7 Band Members (2 Females: Priya Lead Vocal & Shreena Guitarist, 5 Male Musicians)
+      const members = [
+        { x: 30, type: 'sarangi', gender: 'male' },   // Shreejan Shyama
+        { x: 50, type: 'flute', gender: 'male' },     // Shrijan Maharjan
+        { x: 70, type: 'guitar', gender: 'female' },  // Shreena Tyataa (Female Guitarist)
+        { x: 90, type: 'vocal', gender: 'female' },   // Priya Basnet (Lead Vocalist)
+        { x: 110, type: 'madal', gender: 'male' },    // Bishal Basi
+        { x: 130, type: 'taa', gender: 'male' },      // Sudeep Chawal
+        { x: 150, type: 'percussion', gender: 'male' },// Amulya Rajchal
+      ];
+
+      members.forEach((m, i) => {
+        const bounce = Math.sin(time * 4 + i) * 1.2;
+        const x = m.x;
+        const y = 68 + bounce;
+
+        if (m.gender === 'female') {
+          // Female Silhouettes (Priya Vocalist & Shreena Guitarist)
+          ctx.fillStyle = '#f59e0b'; // Gold Head
+          ctx.beginPath();
+          ctx.arc(x, y - 4, 3, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Dress / Female Silhouette
+          ctx.fillStyle = m.type === 'vocal' ? '#fbbf24' : '#f59e0b';
+          ctx.beginPath();
+          ctx.moveTo(x - 2.5, y - 1);
+          ctx.lineTo(x + 2.5, y - 1);
+          ctx.lineTo(x + 4, y + 9);
+          ctx.lineTo(x - 4, y + 9);
+          ctx.closePath();
+          ctx.fill();
+
+          // Vocal Mic Stand vs Guitar Instrument
+          if (m.type === 'vocal') {
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(x + 2, y - 5);
+            ctx.lineTo(x + 2, y + 9);
+            ctx.stroke();
+          } else if (m.type === 'guitar') {
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(x - 4, y + 5);
+            ctx.lineTo(x + 4, y + 1);
+            ctx.stroke();
+          }
+        } else {
+          // Male Musicians
+          ctx.fillStyle = '#d97706';
+          ctx.beginPath();
+          ctx.arc(x, y - 3, 2.5, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.fillStyle = '#92400e';
+          ctx.fillRect(x - 2, y, 4, 8);
+
+          // Instrument Visual Cues
+          ctx.strokeStyle = '#f59e0b';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          if (m.type === 'sarangi') {
+            ctx.moveTo(x - 3, y - 1); ctx.lineTo(x + 3, y + 5);
+          } else if (m.type === 'flute') {
+            ctx.moveTo(x - 4, y + 1); ctx.lineTo(x + 4, y + 1);
+          } else if (m.type === 'madal' || m.type === 'percussion') {
+            ctx.arc(x, y + 4, 2, 0, Math.PI * 2);
+          } else if (m.type === 'taa') {
+            ctx.moveTo(x - 2, y + 3); ctx.lineTo(x + 2, y + 3);
+          }
+          ctx.stroke();
+        }
       });
+
+      // Animated Crowd Silhouettes (Foreground)
+      ctx.fillStyle = '#070709';
+      for (let c = 10; c < 170; c += 12) {
+        const crowdArm = Math.sin(time * 5 + c) * 2;
+        ctx.beginPath();
+        ctx.arc(c, 97 + crowdArm, 3, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       animationFrameId = requestAnimationFrame(render);
     };
@@ -460,16 +546,16 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
 
-      {/* Floating Animated Minimal Stage Widget (Top-Left Corner) */}
+      {/* Floating Animated Live Stage Widget (Top-Left Corner) */}
       {!isAnyModalOpen && (
         <div className="fixed top-20 left-4 z-30 hidden sm:block pointer-events-none transition-opacity duration-300">
-          <div className="bg-[#0e0e12]/80 backdrop-blur-md border border-amber-500/30 rounded-2xl p-2 shadow-[0_0_20px_rgba(245,158,11,0.2)] flex flex-col items-center">
-            <span className="text-[9px] font-bold uppercase tracking-wider text-amber-400 mb-1">
-              Bhaktapur Live Stage
+          <div className="bg-[#0e0e12]/90 backdrop-blur-md border border-amber-500/30 rounded-2xl p-2.5 shadow-[0_0_20px_rgba(245,158,11,0.2)] flex flex-col items-center">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-amber-400 mb-1.5">
+              EKAYA HAMI LIVE PERFORMANCE
             </span>
             <canvas
               ref={canvasRef}
-              width={160}
+              width={180}
               height={100}
               className="rounded-xl border border-white/10"
             />
