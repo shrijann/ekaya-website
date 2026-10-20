@@ -270,6 +270,7 @@ export default function Home() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
+  const [showStageWidget, setShowStageWidget] = useState(true);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -295,7 +296,20 @@ export default function Home() {
     setActiveTab(tab);
   }, []);
 
-  // Professional Basantapur Concert Stage Renderer
+  // Hide floating widget on scroll past top section
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 250) {
+        setShowStageWidget(false);
+      } else {
+        setShowStageWidget(true);
+      }
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Stage Renderer: Temple Background + Cheering Crowd + Detailed Characters
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -306,208 +320,176 @@ export default function Home() {
     let time = 0;
 
     const render = () => {
-      time += 0.025;
+      time += 0.03;
       const w = canvas.width;
       const h = canvas.height;
 
       ctx.clearRect(0, 0, w, h);
 
-      // Deep Concert Arena Sky Gradient
+      // Night Sky Gradient
       const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
-      skyGrad.addColorStop(0, '#030306');
-      skyGrad.addColorStop(0.5, '#0e0b18');
-      skyGrad.addColorStop(1, '#020204');
+      skyGrad.addColorStop(0, '#0a0a14');
+      skyGrad.addColorStop(0.6, '#181228');
+      skyGrad.addColorStop(1, '#050508');
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, w, h);
 
-      // Basantapur Durbar Square Pagoda Temple Background
-      ctx.fillStyle = '#090910';
-      // Center Maju Dega Multi-tiered Pagoda
+      // Bright Heritage Temple Background Silhouettes
+      ctx.fillStyle = '#262038';
+      // Center Pagoda Temple Roofs
       ctx.beginPath();
-      ctx.moveTo(w / 2 - 40, 80); ctx.lineTo(w / 2, 35); ctx.lineTo(w / 2 + 40, 80); ctx.fill();
-      ctx.fillRect(w / 2 - 30, 80, 60, 30);
+      ctx.moveTo(w / 2 - 35, 60); ctx.lineTo(w / 2, 20); ctx.lineTo(w / 2 + 35, 60); ctx.fill();
+      ctx.fillRect(w / 2 - 25, 60, 50, 20);
       ctx.beginPath();
-      ctx.moveTo(w / 2 - 60, 110); ctx.lineTo(w / 2, 70); ctx.lineTo(w / 2 + 60, 110); ctx.fill();
-      ctx.fillRect(w / 2 - 45, 110, 90, 40);
+      ctx.moveTo(w / 2 - 50, 80); ctx.lineTo(w / 2, 45); ctx.lineTo(w / 2 + 50, 80); ctx.fill();
+      ctx.fillRect(w / 2 - 38, 80, 76, 30);
 
-      // Side Temple Silhouettes
-      ctx.fillRect(30, 60, 50, 90);
-      ctx.fillRect(w - 80, 60, 50, 90);
+      // Side Temples
+      ctx.fillRect(20, 45, 35, 65);
+      ctx.fillRect(w - 55, 45, 35, 65);
 
-      // Moving Concert Spotlight Beams & Lasers
-      const beam1 = Math.sin(time) * 90;
-      const beam2 = Math.cos(time * 0.8) * 90;
+      // Moving Concert Beams
+      const beam1 = Math.sin(time) * 50;
+      const beam2 = Math.cos(time * 0.8) * 50;
 
       ctx.save();
       ctx.globalCompositeOperation = 'screen';
 
-      // Golden Amber Beam
-      const grad1 = ctx.createLinearGradient(100, 0, 150 + beam1, h);
-      grad1.addColorStop(0, 'rgba(245, 158, 11, 0.45)');
+      const grad1 = ctx.createLinearGradient(60, 0, 100 + beam1, h);
+      grad1.addColorStop(0, 'rgba(245, 158, 11, 0.5)');
       grad1.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = grad1;
       ctx.beginPath();
-      ctx.moveTo(100, 0); ctx.lineTo(80 + beam1, h - 30); ctx.lineTo(220 + beam1, h - 30); ctx.closePath();
+      ctx.moveTo(60, 0); ctx.lineTo(40 + beam1, h - 20); ctx.lineTo(160 + beam1, h - 20); ctx.closePath();
       ctx.fill();
 
-      // Deep Orange Concert Beam
-      const grad2 = ctx.createLinearGradient(w - 100, 0, w - 150 + beam2, h);
-      grad2.addColorStop(0, 'rgba(234, 88, 12, 0.45)');
+      const grad2 = ctx.createLinearGradient(w - 60, 0, w - 100 + beam2, h);
+      grad2.addColorStop(0, 'rgba(234, 88, 12, 0.5)');
       grad2.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = grad2;
       ctx.beginPath();
-      ctx.moveTo(w - 100, 0); ctx.lineTo(w - 220 + beam2, h - 30); ctx.lineTo(w - 80 + beam2, h - 30); ctx.closePath();
+      ctx.moveTo(w - 60, 0); ctx.lineTo(w - 160 + beam2, h - 20); ctx.lineTo(w - 40 + beam2, h - 20); ctx.closePath();
       ctx.fill();
 
       ctx.restore();
 
-      // Professional Metal Truss Rigs & Line Array Speakers
-      ctx.strokeStyle = '#2d2d3a';
-      ctx.lineWidth = 3;
-      // Roof Overhead Truss Grid
+      // Truss Arch
+      ctx.strokeStyle = '#3e3b52';
+      ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.moveTo(20, 20); ctx.lineTo(w - 20, 20);
-      ctx.moveTo(20, 28); ctx.lineTo(w - 20, 28);
+      ctx.moveTo(10, 15); ctx.lineTo(w - 10, 15);
       ctx.stroke();
 
-      // Line-Array Speaker Stacks
-      ctx.fillStyle = '#161622';
-      ctx.fillRect(15, 30, 22, 80);
-      ctx.fillRect(w - 37, 30, 22, 80);
-
-      // Illuminated Stage Deck Surface
-      ctx.fillStyle = '#111118';
-      ctx.beginPath();
-      ctx.moveTo(20, 155); ctx.lineTo(w - 20, 155); ctx.lineTo(w - 5, 210); ctx.lineTo(5, 210);
-      ctx.closePath();
-      ctx.fill();
-
-      // Stage Front Glowing Amber LED Bar
+      // Stage Surface
+      ctx.fillStyle = '#181824';
+      ctx.fillRect(10, 115, w - 20, 25);
       ctx.fillStyle = '#f59e0b';
-      ctx.shadowColor = '#f59e0b';
-      ctx.shadowBlur = 12;
-      ctx.fillRect(20, 155, w - 40, 2.5);
-      ctx.shadowBlur = 0;
+      ctx.fillRect(10, 115, w - 20, 2);
 
-      // 7 Band Members - Positioned across wide stage canvas (No Overlap)
-      const bandMembers = [
-        { name: 'Shreena', role: 'guitar', x: w * 0.12, y: 142, gender: 'female' },
-        { name: 'Amulya', role: 'nagada', x: w * 0.24, y: 135, gender: 'male' },
-        { name: 'Shreejan', role: 'sarangi', x: w * 0.37, y: 146, gender: 'male' },
-        { name: 'Priya', role: 'vocal', x: w * 0.50, y: 148, gender: 'female' },
-        { name: 'Sudeep', role: 'taa', x: w * 0.63, y: 135, gender: 'male' },
-        { name: 'Shrijan', role: 'flute', x: w * 0.76, y: 146, gender: 'male' },
-        { name: 'Bishal', role: 'madal', x: w * 0.88, y: 142, gender: 'male' },
+      // 7 Band Members Spaced Non-Overlapping
+      const members = [
+        { name: 'Shreena', role: 'guitar', x: 28, y: 104, gender: 'female' },
+        { name: 'Amulya', role: 'nagada', x: 62, y: 100, gender: 'male' },
+        { name: 'Shreejan', role: 'sarangi', x: 96, y: 107, gender: 'male' },
+        { name: 'Priya', role: 'vocal', x: 140, y: 108, gender: 'female' },
+        { name: 'Sudeep', role: 'taa', x: 184, y: 100, gender: 'male' },
+        { name: 'Shrijan', role: 'flute', x: 218, y: 107, gender: 'male' },
+        { name: 'Bishal', role: 'madal', x: 252, y: 104, gender: 'male' },
       ];
 
-      bandMembers.forEach((m) => {
-        const bounce = Math.sin(time * 4 + m.x) * 1.5;
+      members.forEach((m) => {
+        const bounce = Math.sin(time * 4.5 + m.x) * 1.2;
         const x = m.x;
         const y = m.y + bounce;
 
         if (m.gender === 'female') {
-          // Female Silhouettes in Traditional Haku Patasi Saree (Red Rim Border)
+          // Female in Haku Patasi (Saree)
           ctx.fillStyle = '#f59e0b';
-          ctx.beginPath(); ctx.arc(x, y - 18, 5.5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(x, y - 12, 4, 0, Math.PI * 2); ctx.fill();
 
-          // Black Haku Patasi Draped Dress
           ctx.fillStyle = '#1c1917';
           ctx.beginPath();
-          ctx.moveTo(x - 5, y - 11);
-          ctx.lineTo(x + 5, y - 11);
-          ctx.lineTo(x + 8, y + 12);
-          ctx.lineTo(x - 8, y + 12);
-          ctx.closePath();
+          ctx.moveTo(x - 4, y - 7); ctx.lineTo(x + 4, y - 7);
+          ctx.lineTo(x + 6, y + 8); ctx.lineTo(x - 6, y + 8); ctx.closePath();
           ctx.fill();
 
-          // Red Border Ribbon
           ctx.fillStyle = '#ef4444';
-          ctx.fillRect(x - 8, y + 8, 16, 2.5);
+          ctx.fillRect(x - 6, y + 5, 12, 2);
 
-          // Instruments Visuals
           if (m.role === 'vocal') {
-            // Priya: Vocal Mic Stand & Gold Glow
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.5;
+            ctx.lineWidth = 1.2;
             ctx.beginPath();
-            ctx.moveTo(x + 4, y - 24); ctx.lineTo(x + 4, y + 12);
-            ctx.stroke();
+            ctx.moveTo(x + 3, y - 16); ctx.lineTo(x + 3, y + 8); ctx.stroke();
             ctx.fillStyle = '#f59e0b';
-            ctx.beginPath(); ctx.arc(x + 4, y - 26, 2.5, 0, Math.PI * 2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x + 3, y - 17, 1.8, 0, Math.PI * 2); ctx.fill();
           } else if (m.role === 'guitar') {
-            // Shreena: Acoustic Guitar
             ctx.strokeStyle = '#fbbf24';
-            ctx.lineWidth = 2.5;
+            ctx.lineWidth = 1.8;
             ctx.beginPath();
-            ctx.moveTo(x - 10, y + 4); ctx.lineTo(x + 10, y - 4);
-            ctx.stroke();
+            ctx.moveTo(x - 7, y + 3); ctx.lineTo(x + 7, y - 2); ctx.stroke();
           }
         } else {
-          // Male Silhouettes in Traditional Daura Suruwal & Dhaka Topi Cap
+          // Male in Daura Suruwal & Dhaka Topi
           ctx.fillStyle = '#d97706';
-          ctx.beginPath(); ctx.arc(x, y - 18, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.beginPath(); ctx.arc(x, y - 12, 3.5, 0, Math.PI * 2); ctx.fill();
 
-          // Red/Pattern Dhaka Topi Cap
           ctx.fillStyle = '#b91c1c';
           ctx.beginPath();
-          ctx.moveTo(x - 5, y - 24);
-          ctx.lineTo(x + 5, y - 20);
-          ctx.lineTo(x + 5, y - 16);
-          ctx.lineTo(x - 5, y - 16);
-          ctx.closePath();
+          ctx.moveTo(x - 3.5, y - 16); ctx.lineTo(x + 3.5, y - 13);
+          ctx.lineTo(x + 3.5, y - 10); ctx.lineTo(x - 3.5, y - 10); ctx.closePath();
           ctx.fill();
 
-          // Daura Suruwal Tunic
           ctx.fillStyle = '#d97706';
-          ctx.fillRect(x - 5, y - 11, 10, 22);
+          ctx.fillRect(x - 3.5, y - 7, 7, 15);
 
-          // Instrument Visuals
           ctx.strokeStyle = '#f59e0b';
           ctx.fillStyle = '#f59e0b';
-          ctx.lineWidth = 2;
+          ctx.lineWidth = 1.5;
 
           if (m.role === 'sarangi') {
-            // Shreejan: Sarangi Body & Bow Motion
             ctx.beginPath();
-            ctx.moveTo(x - 7, y - 6); ctx.lineTo(x + 7, y + 8);
-            ctx.stroke();
+            ctx.moveTo(x - 5, y - 4); ctx.lineTo(x + 5, y + 5); ctx.stroke();
           } else if (m.role === 'flute') {
-            // Shrijan: Flute (Bansuri) Held Horizontally
             ctx.beginPath();
-            ctx.moveTo(x - 11, y - 6); ctx.lineTo(x + 11, y - 6);
-            ctx.stroke();
+            ctx.moveTo(x - 7, y - 4); ctx.lineTo(x + 7, y - 4); ctx.stroke();
           } else if (m.role === 'nagada') {
-            // Amulya: Double Nagada Drums
             ctx.beginPath();
-            ctx.arc(x - 5, y + 8, 4, 0, Math.PI * 2);
-            ctx.arc(x + 5, y + 8, 4, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.arc(x - 3, y + 5, 2.5, 0, Math.PI * 2);
+            ctx.arc(x + 3, y + 5, 2.5, 0, Math.PI * 2); ctx.fill();
           } else if (m.role === 'madal') {
-            // Bishal: Madal Percussion
-            ctx.fillRect(x - 8, y + 4, 16, 6);
+            ctx.fillRect(x - 5, y + 3, 10, 4);
           } else if (m.role === 'taa') {
-            // Sudeep: Taa Cymbals
             ctx.beginPath();
-            ctx.arc(x - 4, y + 2, 3, 0, Math.PI * 2);
-            ctx.arc(x + 4, y + 2, 3, 0, Math.PI * 2);
-            ctx.fill();
+            ctx.arc(x - 2, y + 2, 2, 0, Math.PI * 2);
+            ctx.arc(x + 2, y + 2, 2, 0, Math.PI * 2); ctx.fill();
           }
         }
       });
 
-      // Concert Audience Crowd Silhouettes & Phone Lights in Foreground
-      ctx.fillStyle = '#030305';
-      for (let c = 10; c < w; c += 16) {
-        const armWave = Math.sin(time * 4.5 + c) * 3;
+      // Active Cheering Audience Crowd in Foreground
+      ctx.fillStyle = '#05050a';
+      for (let c = 5; c < w; c += 10) {
+        const cheerWave = Math.sin(time * 5 + c) * 3;
         ctx.beginPath();
-        ctx.arc(c, h - 5 + armWave, 6, 0, Math.PI * 2);
+        ctx.arc(c, h - 4 + cheerWave, 4.5, 0, Math.PI * 2);
         ctx.fill();
 
-        // Phone Flashlights in Crowd
-        if (c % 48 === 0) {
-          ctx.fillStyle = 'rgba(255,255,255,0.7)';
-          ctx.fillRect(c - 1, h - 14 + armWave, 2, 3);
-          ctx.fillStyle = '#030305';
+        // Cheering Arms raised up
+        if (c % 20 === 0) {
+          ctx.strokeStyle = '#05050a';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.moveTo(c, h - 4 + cheerWave);
+          ctx.lineTo(c - 3, h - 14 + cheerWave);
+          ctx.stroke();
+        }
+
+        // Phone Flashlights Glowing in Crowd
+        if (c % 35 === 0) {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(c - 1, h - 16 + cheerWave, 2, 3);
+          ctx.fillStyle = '#05050a';
         }
       }
 
@@ -598,6 +580,23 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
 
+      {/* Floating Animated Stage Widget (Only visible at top section; automatically hides on scroll) */}
+      {!isAnyModalOpen && showStageWidget && (
+        <div className="fixed top-20 left-4 z-30 hidden lg:block pointer-events-none transition-opacity duration-300">
+          <div className="bg-[#0c0c10]/95 backdrop-blur-md border border-amber-500/40 rounded-2xl p-2.5 shadow-[0_0_30px_rgba(245,158,11,0.25)] flex flex-col items-center">
+            <span className="text-[9px] font-bold uppercase tracking-widest text-amber-400 mb-1.5 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]">
+              EKAYA HAMI LIVE PERFORMANCE
+            </span>
+            <canvas
+              ref={canvasRef}
+              width={280}
+              height={140}
+              className="rounded-xl border border-white/10 bg-[#050508]"
+            />
+          </div>
+        </div>
+      )}
+
       {/* Navigation Bar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
         <a href="#top" className="flex items-center space-x-3 group cursor-pointer">
@@ -608,7 +607,6 @@ export default function Home() {
         </a>
 
         <div className="hidden md:flex items-center space-x-8 text-sm font-medium text-neutral-300">
-          <a href="#stage" className="hover:text-amber-500 transition-colors">Live Stage</a>
           <a href="#about" className="hover:text-amber-500 transition-colors">About</a>
           <a href="#videos" className="hover:text-amber-500 transition-colors">Music & Videos</a>
           <a href="#members" className="hover:text-amber-500 transition-colors">Band & Crew</a>
@@ -643,7 +641,6 @@ export default function Home() {
       {/* Mobile Drawer */}
       {isMobileMenuOpen && (
         <div className="md:hidden sticky top-[73px] z-30 bg-[#070708] border-b border-white/10 px-6 py-4 flex flex-col space-y-4 text-center font-medium">
-          <a href="#stage" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">Live Stage</a>
           <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">About</a>
           <a href="#videos" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">Music & Videos</a>
           <a href="#members" onClick={() => setIsMobileMenuOpen(false)} className="hover:text-amber-500 py-1 transition-colors">Band & Crew</a>
@@ -652,7 +649,7 @@ export default function Home() {
       )}
 
       {/* Hero Header */}
-      <header className="relative min-h-[75vh] flex flex-col items-center justify-center text-center px-6 border-b border-white/5 overflow-hidden">
+      <header className="relative min-h-[80vh] flex flex-col items-center justify-center text-center px-6 border-b border-white/5 overflow-hidden">
         <Image src="/ekaya-website/images/ekayaxdonob.jpg" alt="Ekaya Band Cover" fill priority className="object-cover opacity-25" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-[#070708]/60 to-[#070708]/30" />
 
@@ -694,25 +691,6 @@ export default function Home() {
           </div>
         </div>
       </header>
-
-      {/* Clean Embedded Section: Live Concert Stage Experience */}
-      <section id="stage" className="py-12 px-6 max-w-6xl mx-auto border-b border-white/5">
-        <div className="bg-[#0b0b0e] border border-amber-500/30 rounded-3xl p-6 sm:p-8 shadow-[0_0_30px_rgba(245,158,11,0.15)] flex flex-col items-center">
-          <div className="text-center mb-6">
-            <span className="text-amber-500 text-xs font-bold uppercase tracking-widest block">EKAYA HAMI LIVE PERFORMANCE</span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">Basantapur Heritage Stage Visualizer</h2>
-          </div>
-
-          <div className="w-full overflow-x-auto flex justify-center">
-            <canvas
-              ref={canvasRef}
-              width={800}
-              height={230}
-              className="rounded-2xl border border-white/10 bg-[#030305] shadow-2xl max-w-full"
-            />
-          </div>
-        </div>
-      </section>
 
       {/* About Section */}
       <section id="about" className="py-16 px-6 max-w-5xl mx-auto border-b border-white/5">
