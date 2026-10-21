@@ -270,7 +270,7 @@ export default function Home() {
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [zoomedImage, setZoomedImage] = useState<{ src: string; alt: string } | null>(null);
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
-  const [showStageWidget, setShowStageWidget] = useState(true);
+  const [isScrolledDown, setIsScrolledDown] = useState(false);
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
@@ -296,20 +296,20 @@ export default function Home() {
     setActiveTab(tab);
   }, []);
 
-  // Hide floating widget on scroll past top section
+  // Smooth scroll listener that toggles opacity without unmounting canvas
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 250) {
-        setShowStageWidget(false);
+      if (window.scrollY > 200) {
+        setIsScrolledDown(true);
       } else {
-        setShowStageWidget(true);
+        setIsScrolledDown(false);
       }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Stage Renderer: Temple Background + Cheering Crowd + Detailed Characters
+  // Canvas Stage Renderer Loop (Runs continuously to prevent black screens)
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -326,7 +326,7 @@ export default function Home() {
 
       ctx.clearRect(0, 0, w, h);
 
-      // Night Sky Gradient
+      // Night Sky Gradient Background
       const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
       skyGrad.addColorStop(0, '#0a0a14');
       skyGrad.addColorStop(0.6, '#181228');
@@ -334,9 +334,8 @@ export default function Home() {
       ctx.fillStyle = skyGrad;
       ctx.fillRect(0, 0, w, h);
 
-      // Bright Heritage Temple Background Silhouettes
+      // Heritage Temple Background Silhouettes
       ctx.fillStyle = '#262038';
-      // Center Pagoda Temple Roofs
       ctx.beginPath();
       ctx.moveTo(w / 2 - 35, 60); ctx.lineTo(w / 2, 20); ctx.lineTo(w / 2 + 35, 60); ctx.fill();
       ctx.fillRect(w / 2 - 25, 60, 50, 20);
@@ -348,7 +347,7 @@ export default function Home() {
       ctx.fillRect(20, 45, 35, 65);
       ctx.fillRect(w - 55, 45, 35, 65);
 
-      // Moving Concert Beams
+      // Moving Dynamic Beams
       const beam1 = Math.sin(time) * 50;
       const beam2 = Math.cos(time * 0.8) * 50;
 
@@ -373,20 +372,20 @@ export default function Home() {
 
       ctx.restore();
 
-      // Truss Arch
+      // Stage Roof Truss
       ctx.strokeStyle = '#3e3b52';
       ctx.lineWidth = 2;
       ctx.beginPath();
       ctx.moveTo(10, 15); ctx.lineTo(w - 10, 15);
       ctx.stroke();
 
-      // Stage Surface
+      // Stage Floor Surface
       ctx.fillStyle = '#181824';
       ctx.fillRect(10, 115, w - 20, 25);
       ctx.fillStyle = '#f59e0b';
       ctx.fillRect(10, 115, w - 20, 2);
 
-      // 7 Band Members Spaced Non-Overlapping
+      // 7 Non-Overlapping Band Members in Newari Costumes
       const members = [
         { name: 'Shreena', role: 'guitar', x: 28, y: 104, gender: 'female' },
         { name: 'Amulya', role: 'nagada', x: 62, y: 100, gender: 'male' },
@@ -403,7 +402,7 @@ export default function Home() {
         const y = m.y + bounce;
 
         if (m.gender === 'female') {
-          // Female in Haku Patasi (Saree)
+          // Female Silhouette (Haku Patasi Saree)
           ctx.fillStyle = '#f59e0b';
           ctx.beginPath(); ctx.arc(x, y - 12, 4, 0, Math.PI * 2); ctx.fill();
 
@@ -430,7 +429,7 @@ export default function Home() {
             ctx.moveTo(x - 7, y + 3); ctx.lineTo(x + 7, y - 2); ctx.stroke();
           }
         } else {
-          // Male in Daura Suruwal & Dhaka Topi
+          // Male Silhouette (Daura Suruwal & Dhaka Topi)
           ctx.fillStyle = '#d97706';
           ctx.beginPath(); ctx.arc(x, y - 12, 3.5, 0, Math.PI * 2); ctx.fill();
 
@@ -467,7 +466,7 @@ export default function Home() {
         }
       });
 
-      // Active Cheering Audience Crowd in Foreground
+      // Active Cheering Crowd Silhouettes & Lights
       ctx.fillStyle = '#05050a';
       for (let c = 5; c < w; c += 10) {
         const cheerWave = Math.sin(time * 5 + c) * 3;
@@ -475,7 +474,6 @@ export default function Home() {
         ctx.arc(c, h - 4 + cheerWave, 4.5, 0, Math.PI * 2);
         ctx.fill();
 
-        // Cheering Arms raised up
         if (c % 20 === 0) {
           ctx.strokeStyle = '#05050a';
           ctx.lineWidth = 1.5;
@@ -485,7 +483,6 @@ export default function Home() {
           ctx.stroke();
         }
 
-        // Phone Flashlights Glowing in Crowd
         if (c % 35 === 0) {
           ctx.fillStyle = '#ffffff';
           ctx.fillRect(c - 1, h - 16 + cheerWave, 2, 3);
@@ -580,22 +577,24 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
 
-      {/* Floating Animated Stage Widget (Only visible at top section; automatically hides on scroll) */}
-      {!isAnyModalOpen && showStageWidget && (
-        <div className="fixed top-20 left-4 z-30 hidden lg:block pointer-events-none transition-opacity duration-300">
-          <div className="bg-[#0c0c10]/95 backdrop-blur-md border border-amber-500/40 rounded-2xl p-2.5 shadow-[0_0_30px_rgba(245,158,11,0.25)] flex flex-col items-center">
-            <span className="text-[9px] font-bold uppercase tracking-widest text-amber-400 mb-1.5 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]">
-              EKAYA HAMI LIVE PERFORMANCE
-            </span>
-            <canvas
-              ref={canvasRef}
-              width={280}
-              height={140}
-              className="rounded-xl border border-white/10 bg-[#050508]"
-            />
-          </div>
+      {/* Floating Stage Widget: Visible on Mobile & Desktop at top, smooth CSS fade-out on scroll */}
+      <div 
+        className={`fixed top-20 left-4 z-30 transition-all duration-500 transform ${
+          isScrolledDown || isAnyModalOpen ? 'opacity-0 pointer-events-none -translate-y-4' : 'opacity-100 pointer-events-auto translate-y-0'
+        }`}
+      >
+        <div className="bg-[#0c0c10]/95 backdrop-blur-md border border-amber-500/40 rounded-2xl p-2 sm:p-2.5 shadow-[0_0_30px_rgba(245,158,11,0.25)] flex flex-col items-center max-w-[200px] sm:max-w-none">
+          <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-amber-400 mb-1 sm:mb-1.5 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]">
+            EKAYA HAMI LIVE PERFORMANCE
+          </span>
+          <canvas
+            ref={canvasRef}
+            width={280}
+            height={140}
+            className="rounded-xl border border-white/10 bg-[#050508] w-[180px] sm:w-[280px] h-[90px] sm:h-[140px]"
+          />
         </div>
-      )}
+      </div>
 
       {/* Navigation Bar */}
       <nav className="sticky top-0 z-40 bg-[#070708]/90 backdrop-blur-md border-b border-white/10 px-6 py-4 max-w-7xl mx-auto flex items-center justify-between">
