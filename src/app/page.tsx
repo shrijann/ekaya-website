@@ -272,7 +272,8 @@ export default function Home() {
   const [playingVideoKey, setPlayingVideoKey] = useState<string | null>(null);
   const [isScrolledDown, setIsScrolledDown] = useState(false);
 
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const desktopCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const mobileCanvasRef = useRef<HTMLCanvasElement | null>(null);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -296,10 +297,10 @@ export default function Home() {
     setActiveTab(tab);
   }, []);
 
-  // Smooth scroll listener that toggles opacity without unmounting canvas
+  // Scroll handler with passive execution
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 200) {
+      if (window.scrollY > 180) {
         setIsScrolledDown(true);
       } else {
         setIsScrolledDown(false);
@@ -309,185 +310,187 @@ export default function Home() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Canvas Stage Renderer Loop (Runs continuously to prevent black screens)
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+  // Shared Drawing Logic for Canvas Elements
+  const drawStage = useCallback((ctx: CanvasRenderingContext2D, width: number, height: number, time: number) => {
+    ctx.clearRect(0, 0, width, height);
 
+    // Sky Background
+    const skyGrad = ctx.createLinearGradient(0, 0, 0, height);
+    skyGrad.addColorStop(0, '#0a0a14');
+    skyGrad.addColorStop(0.6, '#181228');
+    skyGrad.addColorStop(1, '#050508');
+    ctx.fillStyle = skyGrad;
+    ctx.fillRect(0, 0, width, height);
+
+    // Temples Silhouette
+    ctx.fillStyle = '#262038';
+    ctx.beginPath();
+    ctx.moveTo(width / 2 - 35, 60); ctx.lineTo(width / 2, 20); ctx.lineTo(width / 2 + 35, 60); ctx.fill();
+    ctx.fillRect(width / 2 - 25, 60, 50, 20);
+    ctx.beginPath();
+    ctx.moveTo(width / 2 - 50, 80); ctx.lineTo(width / 2, 45); ctx.lineTo(width / 2 + 50, 80); ctx.fill();
+    ctx.fillRect(width / 2 - 38, 80, 76, 30);
+
+    ctx.fillRect(20, 45, 35, 65);
+    ctx.fillRect(width - 55, 45, 35, 65);
+
+    // Spotlights
+    const beam1 = Math.sin(time) * 50;
+    const beam2 = Math.cos(time * 0.8) * 50;
+
+    ctx.save();
+    ctx.globalCompositeOperation = 'screen';
+
+    const grad1 = ctx.createLinearGradient(60, 0, 100 + beam1, height);
+    grad1.addColorStop(0, 'rgba(245, 158, 11, 0.5)');
+    grad1.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad1;
+    ctx.beginPath();
+    ctx.moveTo(60, 0); ctx.lineTo(40 + beam1, height - 20); ctx.lineTo(160 + beam1, height - 20); ctx.closePath();
+    ctx.fill();
+
+    const grad2 = ctx.createLinearGradient(width - 60, 0, width - 100 + beam2, height);
+    grad2.addColorStop(0, 'rgba(234, 88, 12, 0.5)');
+    grad2.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grad2;
+    ctx.beginPath();
+    ctx.moveTo(width - 60, 0); ctx.lineTo(width - 160 + beam2, height - 20); ctx.lineTo(width - 40 + beam2, height - 20); ctx.closePath();
+    ctx.fill();
+
+    ctx.restore();
+
+    // Stage Structure
+    ctx.strokeStyle = '#3e3b52';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(10, 15); ctx.lineTo(width - 10, 15);
+    ctx.stroke();
+
+    ctx.fillStyle = '#181824';
+    ctx.fillRect(10, 115, width - 20, 25);
+    ctx.fillStyle = '#f59e0b';
+    ctx.fillRect(10, 115, width - 20, 2);
+
+    // Band Members
+    const members = [
+      { name: 'Shreena', role: 'guitar', x: 28, y: 104, gender: 'female' },
+      { name: 'Amulya', role: 'nagada', x: 62, y: 100, gender: 'male' },
+      { name: 'Shreejan', role: 'sarangi', x: 96, y: 107, gender: 'male' },
+      { name: 'Priya', role: 'vocal', x: 140, y: 108, gender: 'female' },
+      { name: 'Sudeep', role: 'taa', x: 184, y: 100, gender: 'male' },
+      { name: 'Shrijan', role: 'flute', x: 218, y: 107, gender: 'male' },
+      { name: 'Bishal', role: 'madal', x: 252, y: 104, gender: 'male' },
+    ];
+
+    members.forEach((m) => {
+      const bounce = Math.sin(time * 4.5 + m.x) * 1.2;
+      const x = m.x;
+      const y = m.y + bounce;
+
+      if (m.gender === 'female') {
+        ctx.fillStyle = '#f59e0b';
+        ctx.beginPath(); ctx.arc(x, y - 12, 4, 0, Math.PI * 2); ctx.fill();
+
+        ctx.fillStyle = '#1c1917';
+        ctx.beginPath();
+        ctx.moveTo(x - 4, y - 7); ctx.lineTo(x + 4, y - 7);
+        ctx.lineTo(x + 6, y + 8); ctx.lineTo(x - 6, y + 8); ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#ef4444';
+        ctx.fillRect(x - 6, y + 5, 12, 2);
+
+        if (m.role === 'vocal') {
+          ctx.strokeStyle = '#ffffff';
+          ctx.lineWidth = 1.2;
+          ctx.beginPath();
+          ctx.moveTo(x + 3, y - 16); ctx.lineTo(x + 3, y + 8); ctx.stroke();
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath(); ctx.arc(x + 3, y - 17, 1.8, 0, Math.PI * 2); ctx.fill();
+        } else if (m.role === 'guitar') {
+          ctx.strokeStyle = '#fbbf24';
+          ctx.lineWidth = 1.8;
+          ctx.beginPath();
+          ctx.moveTo(x - 7, y + 3); ctx.lineTo(x + 7, y - 2); ctx.stroke();
+        }
+      } else {
+        ctx.fillStyle = '#d97706';
+        ctx.beginPath(); ctx.arc(x, y - 12, 3.5, 0, Math.PI * 2); ctx.fill();
+
+        ctx.fillStyle = '#b91c1c';
+        ctx.beginPath();
+        ctx.moveTo(x - 3.5, y - 16); ctx.lineTo(x + 3.5, y - 13);
+        ctx.lineTo(x + 3.5, y - 10); ctx.lineTo(x - 3.5, y - 10); ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#d97706';
+        ctx.fillRect(x - 3.5, y - 7, 7, 15);
+
+        ctx.strokeStyle = '#f59e0b';
+        ctx.fillStyle = '#f59e0b';
+        ctx.lineWidth = 1.5;
+
+        if (m.role === 'sarangi') {
+          ctx.beginPath();
+          ctx.moveTo(x - 5, y - 4); ctx.lineTo(x + 5, y + 5); ctx.stroke();
+        } else if (m.role === 'flute') {
+          ctx.beginPath();
+          ctx.moveTo(x - 7, y - 4); ctx.lineTo(x + 7, y - 4); ctx.stroke();
+        } else if (m.role === 'nagada') {
+          ctx.beginPath();
+          ctx.arc(x - 3, y + 5, 2.5, 0, Math.PI * 2);
+          ctx.arc(x + 3, y + 5, 2.5, 0, Math.PI * 2); ctx.fill();
+        } else if (m.role === 'madal') {
+          ctx.fillRect(x - 5, y + 3, 10, 4);
+        } else if (m.role === 'taa') {
+          ctx.beginPath();
+          ctx.arc(x - 2, y + 2, 2, 0, Math.PI * 2);
+          ctx.arc(x + 2, y + 2, 2, 0, Math.PI * 2); ctx.fill();
+        }
+      }
+    });
+
+    // Crowd
+    ctx.fillStyle = '#05050a';
+    for (let c = 5; c < width; c += 10) {
+      const cheerWave = Math.sin(time * 5 + c) * 3;
+      ctx.beginPath();
+      ctx.arc(c, height - 4 + cheerWave, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      if (c % 20 === 0) {
+        ctx.strokeStyle = '#05050a';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(c, height - 4 + cheerWave);
+        ctx.lineTo(c - 3, height - 14 + cheerWave);
+        ctx.stroke();
+      }
+
+      if (c % 35 === 0) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(c - 1, height - 16 + cheerWave, 2, 3);
+        ctx.fillStyle = '#05050a';
+      }
+    }
+  }, []);
+
+  // Animation Loop for both Desktop & Mobile Canvases
+  useEffect(() => {
     let animationFrameId: number;
     let time = 0;
 
     const render = () => {
       time += 0.03;
-      const w = canvas.width;
-      const h = canvas.height;
 
-      ctx.clearRect(0, 0, w, h);
+      if (desktopCanvasRef.current) {
+        const ctx = desktopCanvasRef.current.getContext('2d');
+        if (ctx) drawStage(ctx, desktopCanvasRef.current.width, desktopCanvasRef.current.height, time);
+      }
 
-      // Night Sky Gradient Background
-      const skyGrad = ctx.createLinearGradient(0, 0, 0, h);
-      skyGrad.addColorStop(0, '#0a0a14');
-      skyGrad.addColorStop(0.6, '#181228');
-      skyGrad.addColorStop(1, '#050508');
-      ctx.fillStyle = skyGrad;
-      ctx.fillRect(0, 0, w, h);
-
-      // Heritage Temple Background Silhouettes
-      ctx.fillStyle = '#262038';
-      ctx.beginPath();
-      ctx.moveTo(w / 2 - 35, 60); ctx.lineTo(w / 2, 20); ctx.lineTo(w / 2 + 35, 60); ctx.fill();
-      ctx.fillRect(w / 2 - 25, 60, 50, 20);
-      ctx.beginPath();
-      ctx.moveTo(w / 2 - 50, 80); ctx.lineTo(w / 2, 45); ctx.lineTo(w / 2 + 50, 80); ctx.fill();
-      ctx.fillRect(w / 2 - 38, 80, 76, 30);
-
-      // Side Temples
-      ctx.fillRect(20, 45, 35, 65);
-      ctx.fillRect(w - 55, 45, 35, 65);
-
-      // Moving Dynamic Beams
-      const beam1 = Math.sin(time) * 50;
-      const beam2 = Math.cos(time * 0.8) * 50;
-
-      ctx.save();
-      ctx.globalCompositeOperation = 'screen';
-
-      const grad1 = ctx.createLinearGradient(60, 0, 100 + beam1, h);
-      grad1.addColorStop(0, 'rgba(245, 158, 11, 0.5)');
-      grad1.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = grad1;
-      ctx.beginPath();
-      ctx.moveTo(60, 0); ctx.lineTo(40 + beam1, h - 20); ctx.lineTo(160 + beam1, h - 20); ctx.closePath();
-      ctx.fill();
-
-      const grad2 = ctx.createLinearGradient(w - 60, 0, w - 100 + beam2, h);
-      grad2.addColorStop(0, 'rgba(234, 88, 12, 0.5)');
-      grad2.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.fillStyle = grad2;
-      ctx.beginPath();
-      ctx.moveTo(w - 60, 0); ctx.lineTo(w - 160 + beam2, h - 20); ctx.lineTo(w - 40 + beam2, h - 20); ctx.closePath();
-      ctx.fill();
-
-      ctx.restore();
-
-      // Stage Roof Truss
-      ctx.strokeStyle = '#3e3b52';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(10, 15); ctx.lineTo(w - 10, 15);
-      ctx.stroke();
-
-      // Stage Floor Surface
-      ctx.fillStyle = '#181824';
-      ctx.fillRect(10, 115, w - 20, 25);
-      ctx.fillStyle = '#f59e0b';
-      ctx.fillRect(10, 115, w - 20, 2);
-
-      // 7 Non-Overlapping Band Members in Newari Costumes
-      const members = [
-        { name: 'Shreena', role: 'guitar', x: 28, y: 104, gender: 'female' },
-        { name: 'Amulya', role: 'nagada', x: 62, y: 100, gender: 'male' },
-        { name: 'Shreejan', role: 'sarangi', x: 96, y: 107, gender: 'male' },
-        { name: 'Priya', role: 'vocal', x: 140, y: 108, gender: 'female' },
-        { name: 'Sudeep', role: 'taa', x: 184, y: 100, gender: 'male' },
-        { name: 'Shrijan', role: 'flute', x: 218, y: 107, gender: 'male' },
-        { name: 'Bishal', role: 'madal', x: 252, y: 104, gender: 'male' },
-      ];
-
-      members.forEach((m) => {
-        const bounce = Math.sin(time * 4.5 + m.x) * 1.2;
-        const x = m.x;
-        const y = m.y + bounce;
-
-        if (m.gender === 'female') {
-          // Female Silhouette (Haku Patasi Saree)
-          ctx.fillStyle = '#f59e0b';
-          ctx.beginPath(); ctx.arc(x, y - 12, 4, 0, Math.PI * 2); ctx.fill();
-
-          ctx.fillStyle = '#1c1917';
-          ctx.beginPath();
-          ctx.moveTo(x - 4, y - 7); ctx.lineTo(x + 4, y - 7);
-          ctx.lineTo(x + 6, y + 8); ctx.lineTo(x - 6, y + 8); ctx.closePath();
-          ctx.fill();
-
-          ctx.fillStyle = '#ef4444';
-          ctx.fillRect(x - 6, y + 5, 12, 2);
-
-          if (m.role === 'vocal') {
-            ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 1.2;
-            ctx.beginPath();
-            ctx.moveTo(x + 3, y - 16); ctx.lineTo(x + 3, y + 8); ctx.stroke();
-            ctx.fillStyle = '#f59e0b';
-            ctx.beginPath(); ctx.arc(x + 3, y - 17, 1.8, 0, Math.PI * 2); ctx.fill();
-          } else if (m.role === 'guitar') {
-            ctx.strokeStyle = '#fbbf24';
-            ctx.lineWidth = 1.8;
-            ctx.beginPath();
-            ctx.moveTo(x - 7, y + 3); ctx.lineTo(x + 7, y - 2); ctx.stroke();
-          }
-        } else {
-          // Male Silhouette (Daura Suruwal & Dhaka Topi)
-          ctx.fillStyle = '#d97706';
-          ctx.beginPath(); ctx.arc(x, y - 12, 3.5, 0, Math.PI * 2); ctx.fill();
-
-          ctx.fillStyle = '#b91c1c';
-          ctx.beginPath();
-          ctx.moveTo(x - 3.5, y - 16); ctx.lineTo(x + 3.5, y - 13);
-          ctx.lineTo(x + 3.5, y - 10); ctx.lineTo(x - 3.5, y - 10); ctx.closePath();
-          ctx.fill();
-
-          ctx.fillStyle = '#d97706';
-          ctx.fillRect(x - 3.5, y - 7, 7, 15);
-
-          ctx.strokeStyle = '#f59e0b';
-          ctx.fillStyle = '#f59e0b';
-          ctx.lineWidth = 1.5;
-
-          if (m.role === 'sarangi') {
-            ctx.beginPath();
-            ctx.moveTo(x - 5, y - 4); ctx.lineTo(x + 5, y + 5); ctx.stroke();
-          } else if (m.role === 'flute') {
-            ctx.beginPath();
-            ctx.moveTo(x - 7, y - 4); ctx.lineTo(x + 7, y - 4); ctx.stroke();
-          } else if (m.role === 'nagada') {
-            ctx.beginPath();
-            ctx.arc(x - 3, y + 5, 2.5, 0, Math.PI * 2);
-            ctx.arc(x + 3, y + 5, 2.5, 0, Math.PI * 2); ctx.fill();
-          } else if (m.role === 'madal') {
-            ctx.fillRect(x - 5, y + 3, 10, 4);
-          } else if (m.role === 'taa') {
-            ctx.beginPath();
-            ctx.arc(x - 2, y + 2, 2, 0, Math.PI * 2);
-            ctx.arc(x + 2, y + 2, 2, 0, Math.PI * 2); ctx.fill();
-          }
-        }
-      });
-
-      // Active Cheering Crowd Silhouettes & Lights
-      ctx.fillStyle = '#05050a';
-      for (let c = 5; c < w; c += 10) {
-        const cheerWave = Math.sin(time * 5 + c) * 3;
-        ctx.beginPath();
-        ctx.arc(c, h - 4 + cheerWave, 4.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        if (c % 20 === 0) {
-          ctx.strokeStyle = '#05050a';
-          ctx.lineWidth = 1.5;
-          ctx.beginPath();
-          ctx.moveTo(c, h - 4 + cheerWave);
-          ctx.lineTo(c - 3, h - 14 + cheerWave);
-          ctx.stroke();
-        }
-
-        if (c % 35 === 0) {
-          ctx.fillStyle = '#ffffff';
-          ctx.fillRect(c - 1, h - 16 + cheerWave, 2, 3);
-          ctx.fillStyle = '#05050a';
-        }
+      if (mobileCanvasRef.current) {
+        const ctx = mobileCanvasRef.current.getContext('2d');
+        if (ctx) drawStage(ctx, mobileCanvasRef.current.width, mobileCanvasRef.current.height, time);
       }
 
       animationFrameId = requestAnimationFrame(render);
@@ -498,7 +501,7 @@ export default function Home() {
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [drawStage]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -577,21 +580,21 @@ export default function Home() {
   return (
     <div id="top" className="relative min-h-screen bg-[#070708] text-neutral-100 font-sans selection:bg-amber-500 selection:text-black scroll-smooth overflow-x-hidden">
 
-      {/* Floating Stage Widget: Visible on Mobile & Desktop at top, smooth CSS fade-out on scroll */}
+      {/* Floating Desktop Animated Stage Widget (xl screens and larger only) */}
       <div 
-        className={`fixed top-20 left-4 z-30 transition-all duration-500 transform ${
+        className={`fixed top-20 left-4 z-30 hidden xl:block transition-all duration-500 transform ${
           isScrolledDown || isAnyModalOpen ? 'opacity-0 pointer-events-none -translate-y-4' : 'opacity-100 pointer-events-auto translate-y-0'
         }`}
       >
-        <div className="bg-[#0c0c10]/95 backdrop-blur-md border border-amber-500/40 rounded-2xl p-2 sm:p-2.5 shadow-[0_0_30px_rgba(245,158,11,0.25)] flex flex-col items-center max-w-[200px] sm:max-w-none">
-          <span className="text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-amber-400 mb-1 sm:mb-1.5 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]">
+        <div className="bg-[#0c0c10]/95 backdrop-blur-md border border-amber-500/40 rounded-2xl p-2.5 shadow-[0_0_30px_rgba(245,158,11,0.25)] flex flex-col items-center">
+          <span className="text-[9px] font-bold uppercase tracking-widest text-amber-400 mb-1.5 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]">
             EKAYA HAMI LIVE PERFORMANCE
           </span>
           <canvas
-            ref={canvasRef}
+            ref={desktopCanvasRef}
             width={280}
             height={140}
-            className="rounded-xl border border-white/10 bg-[#050508] w-[180px] sm:w-[280px] h-[90px] sm:h-[140px]"
+            className="rounded-xl border border-white/10 bg-[#050508]"
           />
         </div>
       </div>
@@ -648,13 +651,29 @@ export default function Home() {
       )}
 
       {/* Hero Header */}
-      <header className="relative min-h-[80vh] flex flex-col items-center justify-center text-center px-6 border-b border-white/5 overflow-hidden">
+      <header className="relative min-h-[85vh] flex flex-col items-center justify-center text-center px-6 border-b border-white/5 overflow-hidden py-10">
         <Image src="/ekaya-website/images/ekayaxdonob.jpg" alt="Ekaya Band Cover" fill priority className="object-cover opacity-25" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#070708] via-[#070708]/60 to-[#070708]/30" />
 
-        <div className="relative z-10 flex flex-col items-center max-w-3xl">
+        <div className="relative z-10 flex flex-col items-center max-w-3xl w-full">
+          
+          {/* In-Line Mobile Stage Widget (Cleanly centered above logo on mobile & tablets) */}
+          <div className="xl:hidden mb-6 w-full max-w-[260px] sm:max-w-[300px]">
+            <div className="bg-[#0c0c10]/90 backdrop-blur-md border border-amber-500/40 rounded-2xl p-2 shadow-[0_0_20px_rgba(245,158,11,0.2)] flex flex-col items-center">
+              <span className="text-[8px] font-bold uppercase tracking-widest text-amber-400 mb-1 drop-shadow-[0_0_6px_rgba(245,158,11,0.5)]">
+                EKAYA HAMI LIVE PERFORMANCE
+              </span>
+              <canvas
+                ref={mobileCanvasRef}
+                width={280}
+                height={140}
+                className="rounded-xl border border-white/10 bg-[#050508] w-full h-auto aspect-[2/1]"
+              />
+            </div>
+          </div>
+
           <a href="#top" className="relative group cursor-pointer">
-            <div className="relative w-36 h-36 rounded-full p-1 bg-neutral-800 mb-6 border border-white/20 group-hover:border-amber-500/80 group-hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
+            <div className="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full p-1 bg-neutral-800 mb-6 border border-white/20 group-hover:border-amber-500/80 group-hover:scale-105 transition-all duration-300 shadow-[0_0_20px_rgba(245,158,11,0.15)]">
               <div className="relative w-full h-full rounded-full overflow-hidden">
                 <Image src="/ekaya-website/images/logo.png" alt="Ekaya Logo" fill className="object-cover" />
               </div>
@@ -670,21 +689,21 @@ export default function Home() {
 
           <div className="relative group cursor-pointer my-2">
             <div className="absolute -inset-2 bg-gradient-to-r from-amber-500/20 via-orange-500/20 to-amber-500/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-all duration-500" />
-            <h1 className="relative text-5xl sm:text-7xl font-extrabold tracking-tight text-white group-hover:text-amber-400 group-hover:scale-105 group-hover:drop-shadow-[0_0_25px_rgba(245,158,11,0.6)] transition-all duration-300">
+            <h1 className="relative text-4xl sm:text-7xl font-extrabold tracking-tight text-white group-hover:text-amber-400 group-hover:scale-105 group-hover:drop-shadow-[0_0_25px_rgba(245,158,11,0.6)] transition-all duration-300">
               EKAYA HAMI
             </h1>
           </div>
 
-          <p className="text-lg sm:text-xl text-neutral-300 font-light max-w-2xl leading-relaxed mt-2">
+          <p className="text-base sm:text-xl text-neutral-300 font-light max-w-2xl leading-relaxed mt-2">
             Nepali Folk-Fusion Ensemble from Bhaktapur, Nepal
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center items-center gap-4">
-            <a href="#videos" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all shadow-lg shadow-amber-500/20 hover:scale-105">
+            <a href="#videos" className="bg-amber-500 hover:bg-amber-400 text-black font-semibold px-8 py-3.5 rounded-2xl transition-all shadow-lg shadow-amber-500/20 hover:scale-105 text-sm">
               <span>Watch Videos</span>
             </a>
             
-            <button type="button" onClick={() => setIsBookingOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-neutral-100 font-semibold px-8 py-3.5 rounded-2xl transition-all hover:scale-105">
+            <button type="button" onClick={() => setIsBookingOpen(true)} className="bg-white/10 hover:bg-white/20 border border-white/15 text-neutral-100 font-semibold px-8 py-3.5 rounded-2xl transition-all hover:scale-105 text-sm">
               <span>Book Live Performance</span>
             </button>
           </div>
